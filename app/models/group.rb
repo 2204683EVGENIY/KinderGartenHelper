@@ -3,5 +3,5 @@ class Group < ApplicationRecord
   has_many :childrens
   has_many :monthly_reports
 
-  validates :title, presence: true
+  validates :title, presence: true, uniqueness: true
 end
