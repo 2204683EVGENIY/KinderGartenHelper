@@ -3,5 +3,5 @@ class Child < ApplicationRecord
   has_many :info_about_visits
 
   validates :first_name, :middle_name, :last_name, :account_number, presence: true
-  validates :account_number, numeralically: { only_integer: true }, uniquness: true
+  validates :account_number, numericality: { only_integer: true }, uniqueness: true
 end
