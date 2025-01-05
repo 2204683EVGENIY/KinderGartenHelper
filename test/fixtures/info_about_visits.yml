@@ -4,8 +4,16 @@
 # model remove the "{}" from the fixture names and add the columns immediately
 # below each fixture, per the syntax in the comments below
 #
-one: {}
-# column: value
-#
-two: {}
-# column: value
+visit_one:
+  id: 1
+  child_id: 1
+  date: "2025-01-01"
+  kindergarten_visited: true
+  reason: 0 # sick
+
+visit_two:
+  id: 2
+  child_id: 2
+  date: "2025-01-02"
+  kindergarten_visited: false
+  reason: 1 # vacation
