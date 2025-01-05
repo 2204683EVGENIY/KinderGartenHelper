@@ -5,7 +5,7 @@ class CreateChildren < ActiveRecord::Migration[8.0]
       t.string :first_name, null: false
       t.string :middle_name, null: false
       t.string :last_name, null: false
-      t.integer :account_number, null: false, unique: true
+      t.integer :account_number, null: false
       t.boolean :active, null: false, default: false
 
       t.timestamps
