@@ -4,5 +4,5 @@ class Child < ApplicationRecord
 
   validates :first_name, :middle_name, :last_name, :account_number, :active, presence: true
   validates :account_number, numericality: { only_integer: true }, uniqueness: true
-  validates :active, inclusion: { in: [true, false] }
+  validates :active, inclusion: { in: [ true, false ] }
 end

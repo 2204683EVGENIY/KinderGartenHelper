@@ -4,7 +4,7 @@ class InfoAboutVisit < ApplicationRecord
   enum :reason, sick: 0, vacation: 1, other: 2
 
   validates :date, presence: true
-  validates :kindergarten_visited, inclusion: { in: [true, false] }
+  validates :kindergarten_visited, inclusion: { in: [ true, false ] }
 
   def reason=(value)
     begin
