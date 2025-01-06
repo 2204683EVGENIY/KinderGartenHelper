@@ -18,6 +18,7 @@ jobs:
         with:
           ruby-version: .ruby-version
           bundler-cache: true
+          cache-key: ${{ runner.os }}-bundle-${{ hashFiles('**/Gemfile.lock') }}
 
       - name: Scan for common Rails security vulnerabilities using static analysis
         run: bin/brakeman --no-pager
