@@ -33,7 +33,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_01_05_172256) do
     t.integer "child_id", null: false
     t.date "date", null: false
     t.boolean "kindergarten_visited", null: false
-    t.integer "reason", null: false
+    t.integer "reason"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["child_id"], name: "index_info_about_visits_on_child_id"
