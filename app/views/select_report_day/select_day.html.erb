@@ -1,29 +1,32 @@
 <%= form_with url: select_day_path, method: :get, data: { turbo_frame: "childrens_list" } do |form| %>
   <label for="day">Report day:</label>
-  <input type="date" id="day" name="day" value="<%= @day %>" min="2025-01-01" max="<%= max_available_day(@day) %>" />
+  <input type="date" id="day" name="day" value="<%= day %>" min="2025-01-01" max="<%= max_available_day(day) %>" />
   <%= form.submit %>
 <% end %>
 Group mentor: <b><%= mentor.first_name %></b>
 Group title: <b><%= group.title %></b>
 <%= turbo_frame_tag "childrens_list" do %>
-   <table>
-     <tr>
-       <th>Child name</th>
-       <th>Account number</th>
-       <th>Add Info</th>
-       <th>Remove Info</th>
+  Current visible day: <b><%= day %></b>
+  <table>
+    <tr>
+      <th>Checkbox</th>
+      <th>Child name</th>
+      <th>Account number</th>
+      <th>Add Info</th>
+      <th>Remove Info</th>
+    </tr>
+    <% childrens.each do |child| %>
+      <tr>
+        <td>|-|</td>
+        <td>
+          <%= child.first_name %>
+          <%= child.middle_name %>
+          <%= child.last_name %>
+        </td>
+        <td><%= child.account_number %></td>
+        <td>Visited/Skipped</td>
+        <td>Update InfoAboutVisit</td>
       </tr>
-      <% childrens.each do |child| %>
-        <tr>
-          <td>
-            <%= child.first_name %>
-            <%= child.middle_name %>
-            <%= child.last_name %>
-          </td>
-          <td><%= child.account_number %></td>
-          <td>Buttons Visited/Skipped</td>
-          <td>Button remove InfoAboutVisit</td>
-        </tr>
-      <% end %>
-    </table>
+    <% end %>
+  </table>
 <% end %>
