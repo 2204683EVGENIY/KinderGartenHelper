@@ -11,4 +11,6 @@ Rails.application.routes.draw do
 
   # Defines the root path route ("/")
   # root "posts#index"
+  root "select_report_day#select_day"
+  get "select_day", to: "select_report_day#select_day"
 end
