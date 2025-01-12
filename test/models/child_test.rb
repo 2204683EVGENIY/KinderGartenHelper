@@ -126,6 +126,6 @@ class ChildTest < ActiveSupport::TestCase
 
   test "should have many info_about_visits" do
     child = children(:child_one)
-    assert_respond_to child, :info_about_visits
+    assert_respond_to child, :info_about_visit
   end
 end

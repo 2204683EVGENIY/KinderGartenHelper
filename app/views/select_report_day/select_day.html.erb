@@ -1,0 +1,42 @@
+<div class="container-fluid my-3 mx-0 p-0 row">
+  <div class="container-fluid m-0 py-1 px-1 col-12 d-flex justify-content-center">
+    <%= form_with url: select_day_path, method: :get, data: { turbo_frame: "childrens_list" } do |form| %>
+      <label for="day">Report day:</label>
+      <input type="date" id="day" name="day" value="<%= day %>" min="2025-01-01" max="<%= max_available_day(day) %>" />
+      <%= form.submit %>
+    <% end %>
+  </div>
+  <div class="container-fluid m-0 py-1 px-1 col-12 d-flex justify-content-center">
+    <div class="m-0 p-0 d-flex flex-column">
+      <p class="m-0 p-0 lh-1">Group title: <b><%= group.title %></b></p>
+      <p class="m-0 p-0 lh-1">Group mentor: <b><%= mentor.first_name %></b></p>
+    </div>
+  </div>
+  <div class="container-fluid m-0 py-1 px-1 col-12 d-flex justify-content-center">
+    <%= turbo_frame_tag "childrens_list" do %>
+      <p class="m-0 pb-2 pt-0 px-0 text-center">Current visible day: <b><%= day %></b></p>
+      <table class="table table-sm text-center">
+        <tr>
+          <th>Checkbox</th>
+          <th>Child name</th>
+          <th>Add Info</th>
+          <th>Update Info</th>
+        </tr>
+        <% childrens.each do |child| %>
+          <tr>
+            <td>|-|</td>
+            <td>
+              <div class="m-0 p-0 d-flex flex-column">
+                <p class="m-0 p-0 lh-1"><%= child.first_name %></p>
+                <p class="m-0 p-0 lh-1"><%= child.middle_name %></p>
+                <p class="m-0 p-0 lh-1"><%= child.last_name %></p>
+              </div>
+            </td>
+            <td>Visited/Skipped</td>
+            <td>Update</td>
+          </tr>
+        <% end %>
+      </table>
+    <% end %>
+  </div>
+</div>
