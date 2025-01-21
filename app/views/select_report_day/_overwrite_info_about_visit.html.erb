@@ -1,0 +1,13 @@
+<td class="<%= bg_color_by_visit(child, day.to_date) %>">
+  <div class="d-flex justify-content-center mt-2 mb-0 mx-0 p-0">
+    <input class="form-check-input" type="checkbox" id="child_checkbox_<%= child.id %>" value="<%= child.id %>" name="child_ids[]">
+  </div>
+</td>
+<td class="<%= bg_color_by_visit(child, day.to_date) %>">
+  <div class="m-0 p-0 d-flex flex-column">
+    <p class="m-0 p-0 lh-1"><%= child.first_name %></p>
+    <p class="m-0 p-0 lh-1"><%= child.middle_name %></p>
+    <p class="m-0 p-0 lh-1"><%= child.last_name %></p>
+  </div>
+</td>
+<td class="<%= bg_color_by_visit(child, day.to_date) %>"><%= child_info_about_visit(child, day) %></td>

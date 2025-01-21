@@ -1,5 +1,7 @@
 class SelectReportDayController < ApplicationController
   before_action :check_inputed_day, only: %i[ select_day ]
+  before_action :find_child, except: %i[ select_day add_info_to_childrens ]
+  before_action :correct_day, except: %i[ select_day add_info_to_childrens ]
 
   def select_day
     @mentor = Mentor.includes(:group).find(1)
@@ -10,20 +12,98 @@ class SelectReportDayController < ApplicationController
     render "select_day", locals: { mentor: @mentor, group: @group, childrens: @childrens, day: @day }
   end
 
+  def add_info_to_childrens
+    if (params[:child_ids].present? && params[:commit].present? && params[:day].present?)
+      childrens = Child.where(id: params[:child_ids])
+
+      if params[:commit] == "Mark as visited"
+        childrens.each do |child|
+          if child.info_already_present?(params[:day].to_date)
+            child.refresh_visit_info(params[:day].to_date)
+            turbo_update(child, params[:day].to_date)
+          else
+            child.create_visit_info(params[:day].to_date)
+            turbo_update(child, params[:day].to_date)
+          end
+        end
+      elsif params[:commit] == "Mark as skiped"
+        childrens.each do |child|
+          if child.info_already_present?(params[:day].to_date)
+            child.refresh_visit_info(params[:day].to_date)
+            turbo_update(child, params[:day].to_date)
+          else
+            child.create_skip_info(params[:day].to_date)
+            turbo_update(child, params[:day].to_date)
+          end
+        end
+      else
+        redirect_to root_path
+      end
+    end
+  end
+
+  def add_info_about_visit
+    if @date.present? && @child.present?
+      @child.create_visit_info(@date)
+      turbo_update(@child, @date)
+    else
+      redirect_to root_path
+    end
+  end
+
+  def add_info_about_skip
+    if @date.present? && @child.present?
+      @child.create_skip_info(@date)
+      turbo_update(@child, @date)
+    else
+      redirect_to root_path
+    end
+  end
+
+  def refresh_info_about_visit
+    if @date.present? && @child.present?
+      @child.refresh_visit_info(@date)
+      turbo_update(@child, @date)
+    else
+      redirect_to root_path
+    end
+  end
+
   private
 
+  def find_child
+    @child = Child.find(params[:child])
+  end
+
+  def correct_day
+    @date = clean_date_param(params[:day]).to_date if params[:day].present?
+  end
+
+  def turbo_update(child, date)
+    respond_to do |format|
+      format.turbo_stream do
+        Turbo::StreamsChannel.broadcast_update_to(
+          "#{ child.group.title }_childrens_list_#{ date }",
+          target: "child_#{ child.id }",
+          partial: "select_report_day/overwrite_info_about_visit",
+          locals: { child: child, day: params[:day] }
+        )
+      end
+    end
+  end
+
   def clean_date_param(param)
-    param.gsub(/.*?(\b\d{4}-\d{2}-\d{2}\b).*?/, '\1')
+    param.gsub(/.*?(\b\d{4}-\d{2}-\d{2}\b).*?/, '\1') if param.present?
   end
 
   def check_inputed_day
     cleaned_params_day = params[:day].present? ? clean_date_param(params[:day]) : ""
 
     valid_date = begin
-                          Date.parse(cleaned_params_day)
-                        rescue ArgumentError
-                          nil
-                        end
+                           Date.parse(cleaned_params_day)
+                         rescue ArgumentError
+                           nil
+                         end
 
     if valid_date && valid_date >= Date.new(2025, 1, 1) && valid_date <= Time.current.to_date + 5.days
       params[:day] = valid_date.strftime("%Y-%m-%d")

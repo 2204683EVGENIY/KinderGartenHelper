@@ -13,4 +13,8 @@ Rails.application.routes.draw do
   # root "posts#index"
   root "select_report_day#select_day"
   get "select_day", to: "select_report_day#select_day"
+  post "add_info_to_childrens", to: "select_report_day#add_info_to_childrens"
+  post "add_info_about_visit", to: "select_report_day#add_info_about_visit"
+  post "add_info_about_skip", to: "select_report_day#add_info_about_skip"
+  patch "refresh_info_about_visit", to: "select_report_day#refresh_info_about_visit"
 end
