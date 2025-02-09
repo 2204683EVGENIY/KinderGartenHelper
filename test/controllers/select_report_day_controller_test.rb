@@ -196,8 +196,7 @@ class SelectReportDayControllerTest < ActionDispatch::IntegrationTest
 
   test "should select the next day" do
     @mentor = mentors(:mentor_one)
-    @group = @mentor.group
-    @childrens = @group.childrens
+    @groups = @mentor.groups
     @day = Time.current.to_date.strftime("%Y-%m-%d")
 
     get select_previous_or_next_day_url, params: { choosing_day: "next", day: @day }
@@ -209,8 +208,7 @@ class SelectReportDayControllerTest < ActionDispatch::IntegrationTest
 
   test "should select the previous day" do
     @mentor = mentors(:mentor_one)
-    @group = @mentor.group
-    @childrens = @group.childrens
+    @groups = @mentor.groups
     @day = Time.current.to_date.strftime("%Y-%m-%d")
 
     get select_previous_or_next_day_url, params: { choosing_day: "previous", day: @day }
@@ -222,8 +220,7 @@ class SelectReportDayControllerTest < ActionDispatch::IntegrationTest
 
   test "should redirect to root if choosing_day is invalid" do
     @mentor = mentors(:mentor_one)
-    @group = @mentor.group
-    @childrens = @group.childrens
+    @groups = @mentor.groups
     @day = Time.current.to_date.strftime("%Y-%m-%d")
 
     get select_previous_or_next_day_url, params: { choosing_day: "invalid", day: @day }
