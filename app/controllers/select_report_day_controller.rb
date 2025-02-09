@@ -26,7 +26,7 @@ class SelectReportDayController < ApplicationController
   end
 
   def add_info_to_childrens
-    if (params[:child_ids].present? && params[:commit].present? && params[:day].present?)
+    if params[:child_ids].present? && params[:commit].present? && params[:day].present?
       childrens = Child.where(id: params[:child_ids])
 
       if params[:commit] == "Mark as visited"
