@@ -9,11 +9,9 @@ mentor_one:
   first_name: "John"
   middle_name: "Michael"
   last_name: "Doe"
-  group_id: 1
 
 mentor_two:
   id: 2
   first_name: "Jane"
   middle_name: "Elizabeth"
   last_name: "Smith"
-  group_id: 2

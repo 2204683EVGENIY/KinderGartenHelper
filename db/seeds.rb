@@ -8,24 +8,48 @@
 #     MovieGenre.find_or_create_by!(name: genre_name)
 #   end
 
-group = Group.create(
-                  title: "Group A"
-                )
+group_one = Group.create(
+                        title: "Group A"
+                      )
+
+group_two = Group.create(
+                        title: "Group B"
+                      )
 
 mentor = Mentor.create(
                   first_name: "BabySitter",
                   middle_name: "For",
-                  last_name: "Group A",
-                  group_id: group.id
+                  last_name: "Group A && B",
                 )
 
+group_mentors = GroupMentor.create(
+                               group_id: group_one.id,
+                               mentor_id:  mentor.id,
+                             )
+
+group_mentors = GroupMentor.create(
+                               group_id: group_two.id,
+                               mentor_id:  mentor.id,
+                             )
+
 childrens = 15.times do |i|
-                        Child.create(
-                          first_name: "Child #{ i }",
-                          middle_name: "From",
-                          last_name: "Group A",
-                          account_number: rand(100_000..999_999),
-                          group_id: group.id,
-                          active: true
-                        )
-                      end
+                      Child.create(
+                        first_name: "Child #{ i }",
+                        middle_name: "From",
+                        last_name: "Group A",
+                        account_number: rand(100_000..999_999),
+                        group_id: group_one.id,
+                        active: true
+                      )
+                    end
+
+childrens = 15.times do |i|
+                      Child.create(
+                        first_name: "Child #{ i }",
+                        middle_name: "From",
+                        last_name: "Group B",
+                        account_number: rand(100_000..999_999),
+                        group_id: group_two.id,
+                        active: true
+                      )
+                    end

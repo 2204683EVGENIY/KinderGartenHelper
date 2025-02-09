@@ -1,5 +1,6 @@
 class Group < ApplicationRecord
-  has_many :mentors
+  has_many :group_mentors
+  has_many :mentors, through: :group_mentors
   has_many :childrens, class_name: "Child"
   has_many :monthly_reports
 

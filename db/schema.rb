@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_01_06_112331) do
+ActiveRecord::Schema[8.0].define(version: 2025_02_09_124240) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -51,6 +51,15 @@ ActiveRecord::Schema[8.0].define(version: 2025_01_06_112331) do
     t.index ["group_id"], name: "index_children_on_group_id"
   end
 
+  create_table "group_mentors", force: :cascade do |t|
+    t.integer "mentor_id", null: false
+    t.integer "group_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["group_id"], name: "index_group_mentors_on_group_id"
+    t.index ["mentor_id"], name: "index_group_mentors_on_mentor_id"
+  end
+
   create_table "groups", force: :cascade do |t|
     t.string "title", null: false
     t.datetime "created_at", null: false
@@ -71,10 +80,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_01_06_112331) do
     t.string "first_name", null: false
     t.string "middle_name", null: false
     t.string "last_name", null: false
-    t.integer "group_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["group_id"], name: "index_mentors_on_group_id"
   end
 
   create_table "monthly_reports", force: :cascade do |t|
@@ -91,8 +98,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_01_06_112331) do
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "children", "groups"
+  add_foreign_key "group_mentors", "groups"
+  add_foreign_key "group_mentors", "mentors"
   add_foreign_key "info_about_visits", "children"
-  add_foreign_key "mentors", "groups"
   add_foreign_key "monthly_reports", "groups"
   add_foreign_key "monthly_reports", "mentors"
 end
