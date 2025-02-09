@@ -1,7 +1,7 @@
 class SelectReportDayController < ApplicationController
-  before_action :check_inputed_day, only: %i[ select_day ]
-  before_action :find_child, except: %i[ select_day add_info_to_childrens ]
-  before_action :correct_day, except: %i[ select_day add_info_to_childrens ]
+  before_action :check_inputed_day, only: %i[ select_day select_previous_or_next_day ]
+  before_action :find_child, except: %i[ select_day select_previous_or_next_day add_info_to_childrens ]
+  before_action :correct_day, except: %i[ select_day select_previous_or_next_day add_info_to_childrens ]
 
   def select_day
     @mentor = Mentor.includes(:group).find(1)
@@ -10,6 +10,19 @@ class SelectReportDayController < ApplicationController
     @day = params[:day]
 
     render "select_day", locals: { mentor: @mentor, group: @group, childrens: @childrens, day: @day }
+  end
+
+  def select_previous_or_next_day
+    @mentor = Mentor.includes(:group).find(1)
+    @group = @mentor.group
+    @childrens = @group.childrens.includes(:info_about_visit)
+
+    if params[:choosing_day] == "next" || params[:choosing_day] == "previous"
+      params[:choosing_day] == "next" ? @day = params[:day].to_date + 1.day : @day = params[:day].to_date - 1.day
+      render "select_day", locals: { mentor: @mentor, group: @group, childrens: @childrens, day: @day }
+    else
+      redirect_to root_path
+    end
   end
 
   def add_info_to_childrens

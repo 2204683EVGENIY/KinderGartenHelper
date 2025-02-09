@@ -193,4 +193,42 @@ class SelectReportDayControllerTest < ActionDispatch::IntegrationTest
     assert_equal true, first_visit_info.kindergarten_visited
     assert_nil(first_visit_info.reason)
   end
+
+  test "should select the next day" do
+    @mentor = mentors(:mentor_one)
+    @group = @mentor.group
+    @childrens = @group.childrens
+    @day = Time.current.to_date.strftime("%Y-%m-%d")
+
+    get select_previous_or_next_day_url, params: { choosing_day: "next", day: @day }
+
+    assert_response :success
+    expected_day = (Time.current.to_date + 1.day).strftime("%Y-%m-%d")
+    assert_select "input#day[value=?]", expected_day
+  end
+
+  test "should select the previous day" do
+    @mentor = mentors(:mentor_one)
+    @group = @mentor.group
+    @childrens = @group.childrens
+    @day = Time.current.to_date.strftime("%Y-%m-%d")
+
+    get select_previous_or_next_day_url, params: { choosing_day: "previous", day: @day }
+
+    assert_response :success
+    expected_day = (Time.current.to_date - 1.day).strftime("%Y-%m-%d")
+    assert_select "input#day[value=?]", expected_day
+  end
+
+  test "should redirect to root if choosing_day is invalid" do
+    @mentor = mentors(:mentor_one)
+    @group = @mentor.group
+    @childrens = @group.childrens
+    @day = Time.current.to_date.strftime("%Y-%m-%d")
+
+    get select_previous_or_next_day_url, params: { choosing_day: "invalid", day: @day }
+
+    assert_response :redirect
+    assert_redirected_to root_path
+  end
 end
