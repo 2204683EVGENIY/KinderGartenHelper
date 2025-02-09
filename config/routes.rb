@@ -14,7 +14,7 @@ Rails.application.routes.draw do
   root "select_report_day#select_day"
   get "select_day", to: "select_report_day#select_day"
   get "select_previous_or_next_day", to: "select_report_day#select_previous_or_next_day"
-  post "add_info_to_childrens", to: "select_report_day#add_info_to_childrens"
+  post "add_info_to_children", to: "select_report_day#add_info_to_children"
   post "add_info_about_visit", to: "select_report_day#add_info_about_visit"
   post "add_info_about_skip", to: "select_report_day#add_info_about_skip"
   patch "refresh_info_about_visit", to: "select_report_day#refresh_info_about_visit"

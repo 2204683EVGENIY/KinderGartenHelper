@@ -155,7 +155,7 @@ class SelectReportDayControllerTest < ActionDispatch::IntegrationTest
       end
     end
 
-    post add_info_to_childrens_url, params: {
+    post add_info_to_children_url, params: {
       child_ids: [ "#{ child_one.id }", "#{ child_two.id }" ],
       commit: "Mark as visited",
       day: day
@@ -181,7 +181,7 @@ class SelectReportDayControllerTest < ActionDispatch::IntegrationTest
       end
     end
 
-    post add_info_to_childrens_url, params: {
+    post add_info_to_children_url, params: {
       child_ids: [ "#{ child_one.id }" ],
       commit: "Mark as visited",
       day: day

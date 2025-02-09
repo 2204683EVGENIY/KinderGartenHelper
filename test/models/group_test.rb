@@ -24,9 +24,9 @@ class GroupTest < ActiveSupport::TestCase
     assert_respond_to group, :mentors, "Group does not have mentors association"
   end
 
-  test "should respond to childrens association" do
+  test "should respond to children association" do
     group = groups(:group_one)
-    assert_respond_to group, :childrens, "Group does not have childrens association"
+    assert_respond_to group, :children, "Group does not have children association"
   end
 
   test "should respond to monthly reports association" do

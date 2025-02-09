@@ -1,7 +1,7 @@
 class SelectReportDayController < ApplicationController
   before_action :check_inputed_day, only: %i[ select_day select_previous_or_next_day ]
-  before_action :find_child, except: %i[ select_day select_previous_or_next_day add_info_to_childrens ]
-  before_action :correct_day, except: %i[ select_day select_previous_or_next_day add_info_to_childrens ]
+  before_action :find_child, except: %i[ select_day select_previous_or_next_day add_info_to_children ]
+  before_action :correct_day, except: %i[ select_day select_previous_or_next_day add_info_to_children ]
 
   def select_day
     @mentor = Mentor.includes(:groups).find(1)
@@ -23,12 +23,12 @@ class SelectReportDayController < ApplicationController
     end
   end
 
-  def add_info_to_childrens
+  def add_info_to_children
     if params[:child_ids].present? && params[:commit].present? && params[:day].present?
-      childrens = Child.where(id: params[:child_ids])
+      children = Child.where(id: params[:child_ids])
 
       if params[:commit] == "Mark as visited"
-        childrens.each do |child|
+        children.each do |child|
           if child.info_already_present?(params[:day].to_date)
             child.refresh_visit_info(params[:day].to_date)
             turbo_update(child, params[:day].to_date)
@@ -38,7 +38,7 @@ class SelectReportDayController < ApplicationController
           end
         end
       elsif params[:commit] == "Mark as skiped"
-        childrens.each do |child|
+        children.each do |child|
           if child.info_already_present?(params[:day].to_date)
             child.refresh_visit_info(params[:day].to_date)
             turbo_update(child, params[:day].to_date)
@@ -94,7 +94,7 @@ class SelectReportDayController < ApplicationController
     respond_to do |format|
       format.turbo_stream do
         Turbo::StreamsChannel.broadcast_update_to(
-          "#{ child.group.title }_childrens_list_#{ date }",
+          "#{ child.group.title }_children_list_#{ date }",
           target: "child_#{ child.id }",
           partial: "select_report_day/overwrite_info_about_visit",
           locals: { child: child, day: params[:day] }

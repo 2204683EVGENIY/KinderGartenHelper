@@ -1,7 +1,7 @@
-<%= turbo_frame_tag "childrens_list" do %>
+<%= turbo_frame_tag "children_list" do %>
   <div class="container-fluid my-3 mx-0 p-0 row">
     <div class="container-fluid m-0 py-1 px-1 col-12 d-flex justify-content-center">
-      <%= form_with url: select_day_path, method: :get, data: { turbo_frame: "childrens_list" } do |form| %>
+      <%= form_with url: select_day_path, method: :get, data: { turbo_frame: "children_list" } do |form| %>
         <div class="m-0 p-0 d-flex flex-row">
           <label for="day" class="me-2 d-flex align-items-center">Report day:</label>
           <input type="date" id="day" name="day" value="<%= day %>" min="2025-01-01" max="<%= max_available_day(Time.current.to_date) %>" />
@@ -17,13 +17,13 @@
     </div>
 
     <div class="m-0 pb-2 pt-0 px-0 d-flex flex-row justify-content-center align-items-center">
-      <%= link_to select_previous_or_next_day_path(params: { choosing_day: "previous", day: day }), data: { turbo_frame: "childrens_list" }, class: "link-primary link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover" do %>
+      <%= link_to select_previous_or_next_day_path(params: { choosing_day: "previous", day: day }), data: { turbo_frame: "children_list" }, class: "link-primary link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover" do %>
         <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" fill="currentColor" class="bi bi-caret-left-fill" viewBox="0 0 16 16">
           <path d="m3.86 8.753 5.482 4.796c.646.566 1.658.106 1.658-.753V3.204a1 1 0 0 0-1.659-.753l-5.48 4.796a1 1 0 0 0 0 1.506z"/>
         </svg>
       <% end %>
       <p class="mx-3 my-0 p-0">Current day: <b><%= correct_date(day.to_date) %></b></p>
-      <%= link_to select_previous_or_next_day_path(params: { choosing_day: "next", day: day }), data: { turbo_frame: "childrens_list" }, class: "link-primary link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover" do %>
+      <%= link_to select_previous_or_next_day_path(params: { choosing_day: "next", day: day }), data: { turbo_frame: "children_list" }, class: "link-primary link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover" do %>
         <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" fill="currentColor" class="bi bi-caret-right-fill" viewBox="0 0 16 16">
           <path d="m12.14 8.753-5.482 4.796c-.646.566-1.658.106-1.658-.753V3.204a1 1 0 0 1 1.659-.753l5.48 4.796a1 1 0 0 1 0 1.506z"/>
         </svg>
@@ -47,15 +47,15 @@
               <div id="collapseOne<%= group.id %>" class="accordion-collapse collapse show" data-bs-parent="#accordionExample<%= group.id %>">
                 <div class="accordion-body">
                   <div class="container-fluid m-0 py-1 px-1 col-12 d-flex justify-content-center">
-                      <%= turbo_stream_from "#{ group.title }_childrens_list_#{ day.to_date }" %>
-                      <%= form_with url: add_info_to_childrens_path(params: { day: day }), method: :post, data: { turbo: true } do |form| %>
-                        <table class="table table-sm text-center" id="childrens">
+                      <%= turbo_stream_from "#{ group.title }_children_list_#{ day.to_date }" %>
+                      <%= form_with url: add_info_to_children_path(params: { day: day }), method: :post, data: { turbo: true } do |form| %>
+                        <table class="table table-sm text-center" id="children">
                           <tr>
                             <th>Checkbox</th>
                             <th>Child name</th>
                             <th>Add Info</th>
                           </tr>
-                          <% group.childrens.each do |child| %>
+                          <% group.children.each do |child| %>
                             <tr id="child_<%= child.id %>">
                               <td class="<%= bg_color_by_visit(child, day.to_date) %>">
                                 <div class="d-flex justify-content-center mt-2 mb-0 mx-0 p-0">

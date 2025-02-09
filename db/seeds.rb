@@ -32,7 +32,7 @@ group_mentors = GroupMentor.create(
                                mentor_id:  mentor.id,
                              )
 
-childrens = 15.times do |i|
+children = 15.times do |i|
                       Child.create(
                         first_name: "Child #{ i }",
                         middle_name: "From",
@@ -43,7 +43,7 @@ childrens = 15.times do |i|
                       )
                     end
 
-childrens = 15.times do |i|
+children = 15.times do |i|
                       Child.create(
                         first_name: "Child #{ i }",
                         middle_name: "From",

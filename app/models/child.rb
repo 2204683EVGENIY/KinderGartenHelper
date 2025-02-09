@@ -1,5 +1,5 @@
 class Child < ApplicationRecord
-  belongs_to  :group
+  belongs_to :group
   has_many :info_about_visit
 
   validates :first_name, :middle_name, :last_name, :account_number, :active, presence: true
