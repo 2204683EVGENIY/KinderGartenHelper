@@ -12,10 +12,18 @@ Rails.application.routes.draw do
   # Defines the root path route ("/")
   # root "posts#index"
   root "select_report_day#select_day"
+
   get "select_day", to: "select_report_day#select_day"
   get "select_previous_or_next_day", to: "select_report_day#select_previous_or_next_day"
+  get "correct_data_for_month_report", to: "monthly_reports#correct_data_for_month_report"
+  get "correct_month_report_data_form", to: "monthly_reports#correct_month_report_data_form"
+
   post "add_info_to_children", to: "select_report_day#add_info_to_children"
   post "add_info_about_visit", to: "select_report_day#add_info_about_visit"
   post "add_info_about_skip", to: "select_report_day#add_info_about_skip"
+
   patch "refresh_info_about_visit", to: "select_report_day#refresh_info_about_visit"
+  patch "overwrite_children_info", to: "monthly_reports#overwrite_children_info"
+
+  resources :monthly_reports, only: %i[create]
 end

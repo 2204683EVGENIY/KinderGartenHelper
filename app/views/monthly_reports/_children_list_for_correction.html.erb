@@ -1,0 +1,52 @@
+<%= turbo_frame_tag "correct_month_report_data" do %>
+  <%= link_to "Back to form", correct_month_report_data_form_path, class: "btn btn-primary col-12 col-sm-10 col-md-8 col-lg-6 col-xl-4 col-xxl-4 mb-2 mx-auto d-flex flex-column", data: { turbo_frame: "correct_month_report_data" } %>
+
+  <% info_about_visits.each do |visits| %>
+    <div class="accordion my-0 p-0 col-12 col-sm-10 col-md-8 col-lg-6 col-xl-4 col-xxl-4 mx-auto d-flex flex-column" id="accordionPanelsStayOpenExample">
+      <div class="accordion-item">
+        <h2 class="accordion-header">
+          <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapse-<%= visits.first.child.id %>" aria-expanded="true" aria-controls="panelsStayOpen-collapse-<%= visits.first.child.id %>">
+            <div class="m-0 p-0 d-flex flex-column">
+              <p class="m-0 p-0 lh-1"><%= visits.first.child.first_name %></p>
+              <p class="m-0 p-0 lh-1"><%= visits.first.child.middle_name %></p>
+              <p class="m-0 p-0 lh-1"><%= visits.first.child.last_name %></p>
+            </div>
+          </button>
+        </h2>
+        <div id="panelsStayOpen-collapse-<%= visits.first.child.id %>" class="accordion-collapse collapse show">
+          <div class="accordion-body">
+            <%= form_with url: overwrite_children_info_path, method: :patch, data: { turbo: true } do |form| %>
+              <table class="table table-sm text-center" id="visit">
+                <tr>
+                  <th>Checkbox</th>
+                  <th>Date</th>
+                  <th>Selectable</th>
+                </tr>
+                <% visits.each do |visit| %>
+                  <tr id="visit_<%= visit.id %>">
+                    <td>
+                      <div class="d-flex justify-content-center m-0 p-0">
+                        <input class="form-check-input" type="checkbox" id="visit_checkbox_<%= visit.id %>" value="<%= visit.id %>" name="visit_ids[]">
+                      </div>
+                    </td>
+                    <td>
+                      <%= correct_date(visit.date) %>
+                    </td>
+                    <td>
+                      <%= visit.kindergarten_visited %>
+                    </td>
+                  </tr>
+                <% end %>
+              </table>
+              <div class="m-0 p-0 d-flex flex-row">
+                <%= form.submit "sick", class: "btn btn-primary p-1 mx-1 my-0 w-100" %>
+                <%= form.submit "vacation", class: "btn btn-primary p-1 mx-1 my-0 w-100" %>
+                <%= form.submit "other", class: "btn btn-primary p-1 mx-1 my-0 w-100" %>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% end %>
+<% end %>

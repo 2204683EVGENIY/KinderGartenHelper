@@ -4,7 +4,7 @@ module SelectReportDayHelper
   end
 
   def child_info_about_visit(child, day)
-    if child.info_about_visit.find_by(date: day.to_date).present?
+    if child.info_about_visits.find_by(date: day.to_date).present?
       refresh_info_about_visit(child, day)
     else
       add_info_about_visit(child, day)

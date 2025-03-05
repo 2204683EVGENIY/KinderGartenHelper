@@ -1,0 +1,15 @@
+<%= turbo_frame_tag "correct_month_report_data" do %>
+  <%= form_with url: correct_data_for_month_report_path, method: :get, data: { turbo_frame: "correct_month_report_data" } do |form| %>
+    <div class="m-0 p-0 row">
+      <div class="mx-auto my-0 p-0 d-flex flex-column col-8">
+        <%= form.label :year %>
+        <%= form.select :year, (2025..(Date.current.year + 1)).to_a, selected: Date.current.year %>
+        <%= form.label :month %>
+        <%= form.select :month, [*1..12], selected: Date.current.month %>
+        <%= form.label :group_id %>
+        <%= form.select :group_id, groups.map { |g| [g.title, g.id] } %>
+        <%= form.submit "Next", class: "btn btn-primary mt-2" %>
+      </div>
+    </div>
+  <% end %>
+<% end %>

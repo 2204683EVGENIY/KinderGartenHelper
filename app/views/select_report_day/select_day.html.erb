@@ -1,4 +1,38 @@
 <%= turbo_frame_tag "children_list" do %>
+  <div class="mb-0 mt-3 p-0 col-12 col-sm-10 col-md-8 col-lg-6 col-xl-4 col-xxl-4 mx-auto d-flex flex-column">
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+      Generate monthly report
+    </button>
+
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-scrollable modal-fullscreen">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="exampleModalLabel">Correct month report data</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+          </div>
+          <div class="modal-body">
+            <%= turbo_frame_tag "correct_month_report_data" do %>
+              <%= form_with url: correct_data_for_month_report_path, method: :get, data: { turbo_frame: "correct_month_report_data" } do |form| %>
+                <div class="m-0 p-0 row">
+                  <div class="mx-auto my-0 p-0 d-flex flex-column col-8">
+                    <%= form.label :year %>
+                    <%= form.select :year, (2025..(Date.current.year + 1)).to_a, selected: Date.current.year %>
+                    <%= form.label :month %>
+                    <%= form.select :month, [*1..12], selected: Date.current.month %>
+                    <%= form.label :group_id %>
+                    <%= form.select :group_id, groups.map { |g| [g.title, g.id] } %>
+                    <%= form.submit "Next", class: "btn btn-primary mt-2" %>
+                  </div>
+                </div>
+              <% end %>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div class="container-fluid my-3 mx-0 p-0 row">
     <div class="container-fluid m-0 py-1 px-1 col-12 d-flex justify-content-center">
       <%= form_with url: select_day_path, method: :get, data: { turbo_frame: "children_list" } do |form| %>
@@ -47,52 +81,52 @@
               <div id="collapseOne<%= group.id %>" class="accordion-collapse collapse show" data-bs-parent="#accordionExample<%= group.id %>">
                 <div class="accordion-body">
                   <div class="container-fluid m-0 py-1 px-1 col-12 d-flex justify-content-center">
-                      <%= turbo_stream_from "#{ group.title }_children_list_#{ day.to_date }" %>
-                      <%= form_with url: add_info_to_children_path(params: { day: day }), method: :post, data: { turbo: true } do |form| %>
-                        <table class="table table-sm text-center" id="children">
-                          <tr>
-                            <th>Checkbox</th>
-                            <th>Child name</th>
-                            <th>Add Info</th>
-                          </tr>
-                          <% group.children.each do |child| %>
-                            <tr id="child_<%= child.id %>">
-                              <td class="<%= bg_color_by_visit(child, day.to_date) %>">
-                                <div class="d-flex justify-content-center mt-2 mb-0 mx-0 p-0">
-                                  <input class="form-check-input" type="checkbox" id="child_checkbox_<%= child.id %>" value="<%= child.id %>" name="child_ids[]">
-                                </div>
-                              </td>
-                              <td class="<%= bg_color_by_visit(child, day.to_date) %>">
-                                <div class="m-0 p-0 d-flex flex-column">
-                                  <p class="m-0 p-0 lh-1"><%= child.first_name %></p>
-                                  <p class="m-0 p-0 lh-1"><%= child.middle_name %></p>
-                                  <p class="m-0 p-0 lh-1"><%= child.last_name %></p>
-                                </div>
-                              </td>
-                              <td class="<%= bg_color_by_visit(child, day.to_date) %>"><%= child_info_about_visit(child, day) %></td>
-                            </tr>
-                          <% end %>
-                        </table>
-                        <button type="button" class="btn btn-primary p-1 m-0 w-100" data-bs-toggle="modal" data-bs-target="#exampleModal<%= group.id %>">
-                          Mark as...
-                        </button>
-                        <div class="modal fade" id="exampleModal<%= group.id %>" tabindex="-1" aria-labelledby="exampleModalLabel<%= group.id %>" aria-hidden="true">
-                          <div class="modal-dialog modal-dialog-centered">
-                            <div class="modal-content">
-                              <div class="modal-header">
-                                <h1 class="modal-title fs-5" id="exampleModalLabel<%= group.id %>">Mark as...</h1>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+                    <%= turbo_stream_from "#{ group.title }_children_list_#{ day.to_date }" %>
+                    <%= form_with url: add_info_to_children_path(params: { day: day }), method: :post, data: { turbo: true } do |form| %>
+                      <table class="table table-sm text-center" id="children">
+                        <tr>
+                          <th>Checkbox</th>
+                          <th>Child name</th>
+                          <th>Add Info</th>
+                        </tr>
+                        <% group.children.each do |child| %>
+                          <tr id="child_<%= child.id %>">
+                            <td class="<%= bg_color_by_visit(child, day.to_date) %>">
+                              <div class="d-flex justify-content-center mt-2 mb-0 mx-0 p-0">
+                                <input class="form-check-input" type="checkbox" id="child_checkbox_<%= child.id %>" value="<%= child.id %>" name="child_ids[]">
                               </div>
-                              <div class="modal-body">
-                                <div class="m-0 p-0 d-flex flex-row">
-                                  <%= form.submit "Mark as visited", class: "btn btn-primary p-1 mx-1 my-0 w-100", "data-bs-dismiss" => "modal" %>
-                                  <%= form.submit "Mark as skiped", class: "btn btn-primary p-1 mx-1 my-0 w-100", "data-bs-dismiss" => "modal" %>
-                                </div>
+                            </td>
+                            <td class="<%= bg_color_by_visit(child, day.to_date) %>">
+                              <div class="m-0 p-0 d-flex flex-column">
+                                <p class="m-0 p-0 lh-1"><%= child.first_name %></p>
+                                <p class="m-0 p-0 lh-1"><%= child.middle_name %></p>
+                                <p class="m-0 p-0 lh-1"><%= child.last_name %></p>
+                              </div>
+                            </td>
+                            <td class="<%= bg_color_by_visit(child, day.to_date) %>"><%= child_info_about_visit(child, day) %></td>
+                          </tr>
+                        <% end %>
+                      </table>
+                      <button type="button" class="btn btn-primary p-1 m-0 w-100" data-bs-toggle="modal" data-bs-target="#exampleModal<%= group.id %>">
+                        Mark as...
+                      </button>
+                      <div class="modal fade" id="exampleModal<%= group.id %>" tabindex="-1" aria-labelledby="exampleModalLabel<%= group.id %>" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <h1 class="modal-title fs-5" id="exampleModalLabel<%= group.id %>">Mark as...</h1>
+                              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+                            </div>
+                            <div class="modal-body">
+                              <div class="m-0 p-0 d-flex flex-row">
+                                <%= form.submit "Mark as visited", class: "btn btn-primary p-1 mx-1 my-0 w-100", "data-bs-dismiss" => "modal" %>
+                                <%= form.submit "Mark as skiped", class: "btn btn-primary p-1 mx-1 my-0 w-100", "data-bs-dismiss" => "modal" %>
                               </div>
                             </div>
                           </div>
                         </div>
-                      <% end %>
+                      </div>
+                    <% end %>
                   </div>
                 </div>
               </div>
