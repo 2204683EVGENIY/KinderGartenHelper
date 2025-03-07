@@ -1,4 +1,5 @@
 <%= turbo_frame_tag "children_list" do %>
+  <%= turbo_stream_from mentor %>
   <div class="mb-0 mt-3 p-0 col-12 col-sm-10 col-md-8 col-lg-6 col-xl-4 col-xxl-4 mx-auto d-flex flex-column">
     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
       Generate monthly report
@@ -11,7 +12,7 @@
             <h1 class="modal-title fs-5" id="exampleModalLabel">Correct month report data</h1>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
           </div>
-          <div class="modal-body">
+          <div class="modal-body col-12 col-sm-10 col-md-8 col-lg-6 col-xl-4 col-xxl-4 mx-auto d-flex flex-column">
             <%= turbo_frame_tag "correct_month_report_data" do %>
               <%= form_with url: correct_data_for_month_report_path, method: :get, data: { turbo_frame: "correct_month_report_data" } do |form| %>
                 <div class="m-0 p-0 row">

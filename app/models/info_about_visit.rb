@@ -6,6 +6,10 @@ class InfoAboutVisit < ApplicationRecord
   validates :date, presence: true
   validates :kindergarten_visited, inclusion: { in: [ true, false ] }
 
+  def update_visit_info(value)
+    update!(reason: value)
+  end
+
   def reason=(value)
     begin
       super(value)

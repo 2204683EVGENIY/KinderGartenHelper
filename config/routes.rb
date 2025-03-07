@@ -24,6 +24,7 @@ Rails.application.routes.draw do
 
   patch "refresh_info_about_visit", to: "select_report_day#refresh_info_about_visit"
   patch "overwrite_children_info", to: "monthly_reports#overwrite_children_info"
+  patch "overwrite_child_info", to: "monthly_reports#overwrite_child_info"
 
   resources :monthly_reports, only: %i[create]
 end

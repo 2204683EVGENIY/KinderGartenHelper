@@ -1,8 +1,8 @@
 <%= turbo_frame_tag "correct_month_report_data" do %>
-  <%= link_to "Back to form", correct_month_report_data_form_path, class: "btn btn-primary col-12 col-sm-10 col-md-8 col-lg-6 col-xl-4 col-xxl-4 mb-2 mx-auto d-flex flex-column", data: { turbo_frame: "correct_month_report_data" } %>
+  <%= link_to "Back to form", correct_month_report_data_form_path, class: "btn btn-primary col-12 mb-2", data: { turbo_frame: "correct_month_report_data" } %>
 
   <% info_about_visits.each do |visits| %>
-    <div class="accordion my-0 p-0 col-12 col-sm-10 col-md-8 col-lg-6 col-xl-4 col-xxl-4 mx-auto d-flex flex-column" id="accordionPanelsStayOpenExample">
+    <div class="accordion my-0 p-0" id="accordionPanelsStayOpenExample">
       <div class="accordion-item">
         <h2 class="accordion-header">
           <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapse-<%= visits.first.child.id %>" aria-expanded="true" aria-controls="panelsStayOpen-collapse-<%= visits.first.child.id %>">
@@ -32,8 +32,23 @@
                     <td>
                       <%= correct_date(visit.date) %>
                     </td>
-                    <td>
-                      <%= visit.kindergarten_visited %>
+                    <td id="info_about_visit_<%= visit.id %>" class="row">
+                      <div class="dropdown col-12">
+                        <button class="btn btn-primary btn-sm col-12 mx-auto" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                          <%= visit.reason %>
+                        </button>
+                        <ul class="dropdown-menu">
+                          <li>
+                            <%= link_to "sick", overwrite_child_info_path(reason: "sick", visit_id: visit.id), data: { turbo_method: "patch" }, class: "text-decoration-none d-flex justify-content-center my-3 text-white" %>
+                          </li>
+                          <li>
+                            <%= link_to "vacation", overwrite_child_info_path(reason: "vacation", visit_id: visit.id), data: { turbo_method: "patch" }, class: "text-decoration-none d-flex justify-content-center my-3 text-white" %>
+                          </li>
+                          <li>
+                            <%= link_to "other", overwrite_child_info_path(reason: "other", visit_id: visit.id), data: { turbo_method: "patch" }, class: "text-decoration-none d-flex justify-content-center my-3 text-white" %>
+                          </li>
+                        </ul>
+                      </div>
                     </td>
                   </tr>
                 <% end %>

@@ -1,0 +1,16 @@
+<div class="dropdown col-12">
+  <button class="btn btn-primary btn-sm col-12 mx-auto" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+    <%= visit.reason %>
+  </button>
+  <ul class="dropdown-menu">
+    <li>
+      <%= link_to "sick", overwrite_child_info_path(reason: "sick", visit_id: visit.id), data: { turbo_method: "patch" }, class: "text-decoration-none d-flex justify-content-center my-3 text-white" %>
+    </li>
+    <li>
+      <%= link_to "vacation", overwrite_child_info_path(reason: "vacation", visit_id: visit.id), data: { turbo_method: "patch" }, class: "text-decoration-none d-flex justify-content-center my-3 text-white" %>
+    </li>
+    <li>
+      <%= link_to "other", overwrite_child_info_path(reason: "other", visit_id: visit.id), data: { turbo_method: "patch" }, class: "text-decoration-none d-flex justify-content-center my-3 text-white" %>
+    </li>
+  </ul>
+</div>
