@@ -1,7 +1,7 @@
 class SelectReportDayController < ApplicationController
-  before_action :check_inputed_day, only: %i[ select_day select_previous_or_next_day ]
-  before_action :find_child, except: %i[ select_day select_previous_or_next_day add_info_to_children ]
-  before_action :correct_day, except: %i[ select_day select_previous_or_next_day add_info_to_children ]
+  before_action :check_inputed_day, only: %i[select_day select_previous_or_next_day]
+  before_action :find_child, except: %i[select_day select_previous_or_next_day add_info_to_children]
+  before_action :correct_day, except: %i[select_day select_previous_or_next_day add_info_to_children]
 
   def select_day
     @mentor = Mentor.includes(:groups).find(1)

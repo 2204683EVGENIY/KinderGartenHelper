@@ -9,7 +9,7 @@ class SelectReportDayControllerTest < ActionDispatch::IntegrationTest
     assert_select "input#day[value=?]", day
   end
 
-  test "should get select_day with unvalid params" do
+  test "should get select day with unvalid params" do
     day = (Time.current.to_date + 3.days).strftime("%Y-%m-%d")
 
     get select_day_url, params: { day: "some_invalid_data#{ day }some_invalid_data" }
@@ -18,7 +18,7 @@ class SelectReportDayControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should fallback to current day if day is invalid" do
-    day = (Time.current.to_date - 1.year).strftime("%Y-%m-%d")
+    day = Date.new(2024, 1, 1).strftime("%Y-%m-%d")
 
     get select_day_url, params: { day: day }
     assert_response :success
@@ -195,11 +195,11 @@ class SelectReportDayControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should select the next day" do
-    @mentor = mentors(:mentor_one)
-    @groups = @mentor.groups
-    @day = Time.current.to_date.strftime("%Y-%m-%d")
+    mentor = mentors(:mentor_one)
+    groups = mentor.groups
+    day = Time.current.to_date.strftime("%Y-%m-%d")
 
-    get select_previous_or_next_day_url, params: { choosing_day: "next", day: @day }
+    get select_previous_or_next_day_url, params: { choosing_day: "next", day: day }
 
     assert_response :success
     expected_day = (Time.current.to_date + 1.day).strftime("%Y-%m-%d")
@@ -207,11 +207,11 @@ class SelectReportDayControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should select the previous day" do
-    @mentor = mentors(:mentor_one)
-    @groups = @mentor.groups
-    @day = Time.current.to_date.strftime("%Y-%m-%d")
+    mentor = mentors(:mentor_one)
+    groups = mentor.groups
+    day = Time.current.to_date.strftime("%Y-%m-%d")
 
-    get select_previous_or_next_day_url, params: { choosing_day: "previous", day: @day }
+    get select_previous_or_next_day_url, params: { choosing_day: "previous", day: day }
 
     assert_response :success
     expected_day = (Time.current.to_date - 1.day).strftime("%Y-%m-%d")
@@ -219,11 +219,11 @@ class SelectReportDayControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should redirect to root if choosing_day is invalid" do
-    @mentor = mentors(:mentor_one)
-    @groups = @mentor.groups
-    @day = Time.current.to_date.strftime("%Y-%m-%d")
+    mentor = mentors(:mentor_one)
+    groups = mentor.groups
+    day = Time.current.to_date.strftime("%Y-%m-%d")
 
-    get select_previous_or_next_day_url, params: { choosing_day: "invalid", day: @day }
+    get select_previous_or_next_day_url, params: { choosing_day: "invalid", day: day }
 
     assert_response :redirect
     assert_redirected_to root_path

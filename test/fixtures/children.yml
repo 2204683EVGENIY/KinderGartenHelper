@@ -21,3 +21,12 @@ child_two:
   account_number: 789654
   active: false
   group_id: 2
+
+child_three:
+  id: 3
+  first_name: "Arthur"
+  middle_name: "Conan"
+  last_name: "Doil"
+  account_number: 332567
+  active: true
+  group_id: 1

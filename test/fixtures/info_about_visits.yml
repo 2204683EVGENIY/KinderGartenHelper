@@ -17,3 +17,31 @@ visit_two:
   date: "2025-01-02"
   kindergarten_visited: false
   reason: 1 # vacation
+
+visit_three:
+  id: 3
+  child_id: 3
+  date: "2025-01-03"
+  kindergarten_visited: false
+  reason: 2 # other
+
+visit_one_2025_01_02:
+  id: 4
+  child_id: 1
+  date: "2025-01-02"
+  kindergarten_visited: false
+  reason: 2 # other
+
+visit_one_2025_01_03:
+  id: 5
+  child_id: 1
+  date: "2025-01-03"
+  kindergarten_visited: false
+  reason: 2 # other
+
+visit_one_2025_01_04:
+  id: 6
+  child_id: 1
+  date: "2025-01-04"
+  kindergarten_visited: false
+  reason: 2 # other
