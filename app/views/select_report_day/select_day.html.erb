@@ -1,29 +1,31 @@
+<%= content_for(:title, "KGH | Choose & Correct") %>
+
 <%= turbo_frame_tag "children_list" do %>
   <%= turbo_stream_from mentor %>
-  <div class="mb-0 mt-3 p-0 col-12 col-sm-10 col-md-8 col-lg-6 col-xl-4 col-xxl-4 mx-auto d-flex flex-column">
-    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+  <div class="mt-3 p-0 col-12 d-flex flex-column">
+    <button type="button" class="btn btn-primary mx-3" data-bs-toggle="modal" data-bs-target="#exampleModal">
       Generate monthly report
     </button>
 
     <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-scrollable modal-fullscreen">
+      <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
           <div class="modal-header">
             <h1 class="modal-title fs-5" id="exampleModalLabel">Correct month report data</h1>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
           </div>
-          <div class="modal-body col-12 col-sm-10 col-md-8 col-lg-6 col-xl-4 col-xxl-4 mx-auto d-flex flex-column">
+          <div class="modal-body d-flex flex-column">
             <%= turbo_frame_tag "correct_month_report_data" do %>
-              <%= form_with url: correct_data_for_month_report_path, method: :get, data: { turbo_frame: "correct_month_report_data" } do |form| %>
+              <%= form_with url: correct_data_for_month_report_path, method: :get, data: { turbo: false } do |form| %>
                 <div class="m-0 p-0 row">
-                  <div class="mx-auto my-0 p-0 d-flex flex-column col-8">
+                  <div class="m-0 p-0 d-flex flex-column">
                     <%= form.label :year %>
                     <%= form.select :year, (2025..(Date.current.year + 1)).to_a, selected: Date.current.year %>
                     <%= form.label :month %>
                     <%= form.select :month, [*1..12], selected: Date.current.month %>
                     <%= form.label :group_id %>
                     <%= form.select :group_id, groups.map { |g| [g.title, g.id] } %>
-                    <%= form.submit "Next", class: "btn btn-primary mt-2" %>
+                    <%= form.submit "Next", class: "btn btn-primary mt-3" %>
                   </div>
                 </div>
               <% end %>
@@ -35,17 +37,17 @@
   </div>
 
   <div class="container-fluid my-3 mx-0 p-0 row">
-    <div class="container-fluid m-0 py-1 px-1 col-12 d-flex justify-content-center">
+    <div class="container-fluid m-0 py-1 px-3 col-12 d-flex justify-content-center">
       <%= form_with url: select_day_path, method: :get, data: { turbo_frame: "children_list" } do |form| %>
         <div class="m-0 p-0 d-flex flex-row">
-          <label for="day" class="me-2 d-flex align-items-center">Report day:</label>
+          <label for="day" class="me-2 d-flex align-items-center lh-1 text-break">Report day:</label>
           <input type="date" id="day" name="day" value="<%= day %>" min="2025-01-01" max="<%= max_available_day(Time.current.to_date) %>" />
           <%= form.submit "Choose day", class: "btn btn-primary p-1 ms-1 me-1 my-0" %>
         </div>
       <% end %>
     </div>
 
-    <div class="container-fluid m-0 py-1 px-1 col-12 d-flex justify-content-center">
+    <div class="container-fluid m-0 py-3 px-1 col-12 d-flex justify-content-center">
       <div class="m-0 p-0 d-flex flex-column">
         <p class="m-0 p-0 lh-1">Mentor: <b><%= mentor.first_name %></b></p>
       </div>
@@ -67,11 +69,11 @@
 
     <% groups.each do |group| %>
       <div class="row p-0 m-0">
-        <div class="my-0 p-0 col-12 col-sm-10 col-md-8 col-lg-6 col-xl-4 col-xxl-4 mx-auto d-flex flex-column">
+        <div class="m-0 p-3 col-12">
           <div class="accordion" id="accordionExample<%= group.id %>">
             <div class="accordion-item">
               <h2 class="accordion-header">
-                <button class="accordion-button p-3" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne<%= group.id %>" aria-expanded="true" aria-controls="collapseOne<%= group.id %>">
+                <button class="accordion-button p-4" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne<%= group.id %>" aria-expanded="true" aria-controls="collapseOne<%= group.id %>">
                   <div class="container-fluid m-0 py-1 px-1 col-12 d-flex justify-content-center">
                     <div class="m-0 p-0 d-flex flex-column">
                       <p class="m-0 p-0 lh-1">Group title: <b><%= group.title %></b></p>
@@ -80,11 +82,11 @@
                 </button>
               </h2>
               <div id="collapseOne<%= group.id %>" class="accordion-collapse collapse show" data-bs-parent="#accordionExample<%= group.id %>">
-                <div class="accordion-body">
+                <div class="accordion-body p-1">
                   <div class="container-fluid m-0 py-1 px-1 col-12 d-flex justify-content-center">
                     <%= turbo_stream_from "#{ group.title }_children_list_#{ day.to_date }" %>
-                    <%= form_with url: add_info_to_children_path(params: { day: day }), method: :post, data: { turbo: true } do |form| %>
-                      <table class="table table-sm text-center" id="children">
+                    <%= form_with url: add_info_to_children_path(params: { day: day }), method: :post, data: { turbo: true }, class: "w-100" do |form| %>
+                      <table class="table table-sm" id="children">
                         <tr>
                           <th>Checkbox</th>
                           <th>Child name</th>
@@ -93,8 +95,8 @@
                         <% group.children.each do |child| %>
                           <tr id="child_<%= child.id %>">
                             <td class="<%= bg_color_by_visit(child, day.to_date) %>">
-                              <div class="d-flex justify-content-center mt-2 mb-0 mx-0 p-0">
-                                <input class="form-check-input" type="checkbox" id="child_checkbox_<%= child.id %>" value="<%= child.id %>" name="child_ids[]">
+                              <div class="mt-2 mb-0 mx-0 p-0">
+                                <input class="form-check-input p-3 m-0" type="checkbox" id="child_checkbox_<%= child.id %>" value="<%= child.id %>" name="child_ids[]">
                               </div>
                             </td>
                             <td class="<%= bg_color_by_visit(child, day.to_date) %>">

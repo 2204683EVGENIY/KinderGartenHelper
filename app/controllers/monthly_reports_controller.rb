@@ -46,12 +46,11 @@ class MonthlyReportsController < ApplicationController
 
   def correct_data_for_month_report
     if [ *2025..(Date.current.year + 1) ].include?(params[:year].to_i) && Group.pluck(:id).include?(params[:group_id].to_i) && [ *1..12 ].include?(params[:month].to_i)
-      group = Group.includes(:children).find(params[:group_id])
-      children = group.children.includes(:info_about_visits)
-      report_date = Date.new(params[:year].to_i, params[:month].to_i, 1)
-      info_about_visits = children.map { |child| child.find_info_about_visits_for_correction(params[:month].to_i, params[:year].to_i) }.select { |info| info.any? }
-
-      render partial: "children_list_for_correction", locals: { info_about_visits: info_about_visits, report_date: report_date, group_id: params[:group_id] }
+      @mentor = Mentor.includes(:groups).find(1)
+      @group = Group.includes(:children).find(params[:group_id])
+      @children = @group.children.includes(:info_about_visits)
+      @report_date = Date.new(params[:year].to_i, params[:month].to_i, 1)
+      @info_about_visits = @children.map { |child| child.find_info_about_visits_for_correction(params[:month].to_i, params[:year].to_i) }.select { |info| info.any? }
     else
       redirect_to root_path
     end
