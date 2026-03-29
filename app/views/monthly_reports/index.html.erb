@@ -1,0 +1,14 @@
+<%= content_for(:title, "KGH | Page of reports") %>
+
+<div class="container-fluid m-0 p-3">
+  <%= link_to "Back", select_day_path, class: "btn btn-primary col-12 mb-3" %>
+
+  <div class="d-flex flex-column">
+    <% @monthly_reports.each do |report| %>
+      <%= link_to monthly_report_path(report), class: "bg-primary text-center text-white text-decoration-none rounded-3 mb-2 p-2" do %>
+        <p class="m-0 p-0">Created: <%= report.created_at.strftime("%d.%m.%Y | %H:%M:%S") %></p>
+        <p class="m-0 p-0">Report by: <%= report.report_date.strftime("%m.%Y") %></p>
+      <% end %>
+    <% end %>
+  </div>
+</div>

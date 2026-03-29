@@ -19,7 +19,7 @@ class MonthlyReportsController < ApplicationController
         account_number: child.account_number,
         monthly_report_days: month_range.map do |date|
          {
-            date: date,
+            date: date.strftime("%d.%m.%Y"),
             kindergarten_visited: child.info_about_visits.find_by(date: date)&.kindergarten_visited,
             reason: child.info_about_visits.find_by(date: date)&.reason
           }
@@ -34,7 +34,7 @@ class MonthlyReportsController < ApplicationController
       }
     end
 
-    mr = MonthlyReport.create(
+    MonthlyReport.create(
       group_id: monthly_report_params[:group_id],
       mentor: mentor,
       report_date: monthly_report_params[:report_date],
@@ -42,6 +42,39 @@ class MonthlyReportsController < ApplicationController
     )
 
     redirect_to root_path
+  end
+
+  def index
+    @monthly_reports = Mentor.find(1).monthly_reports.order(created_at: :desc)
+  end
+
+  def show
+    @monthly_report = MonthlyReport.find(params[:id])
+    @days = @monthly_report.data.first["monthly_report_days"]
+    @daily_stats = @days.map do |day|
+      date = day["date"]
+
+      day_data = @monthly_report.data.map do |child|
+        child["monthly_report_days"].find { |d| d["date"] == date }
+      end.compact
+
+      {
+        date: date,
+        visit: day_data.count { |d| d["kindergarten_visited"] == true },
+        unvisit: day_data.count { |d| d["kindergarten_visited"] == false },
+        sick: day_data.count { |d| d["reason"] == "sick" },
+        vacation: day_data.count { |d| d["reason"] == "vacation" },
+        other: day_data.count { |d| d["reason"] == "other" }
+      }
+    end
+
+    @monthly_stats = {
+      count_of_visit:    @monthly_report.data.sum { |m| m["monthly_report_info"]["count_of_visit"] },
+      count_of_unvisit:  @monthly_report.data.sum { |m| m["monthly_report_info"]["count_of_unvisit"] },
+      count_of_sick:     @monthly_report.data.sum { |m| m["monthly_report_info"]["count_of_sick"] },
+      count_of_vacation: @monthly_report.data.sum { |m| m["monthly_report_info"]["count_of_vacation"] },
+      count_of_other:    @monthly_report.data.sum { |m| m["monthly_report_info"]["count_of_other"] }
+    }
   end
 
   def correct_data_for_month_report

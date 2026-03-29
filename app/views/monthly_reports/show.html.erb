@@ -1,0 +1,116 @@
+<%= content_for(:title, "KGH | Report") %>
+
+<div class="container-fluid m-0 p-3">
+  <%= link_to "Back", monthly_reports_path, class: "btn btn-primary col-12 mb-3" %>
+
+  <div class="mb-2 mt-0 mx-0 p-0 d-flex flex-row">
+    <p class="me-3 ms-0 my-0 p-0">Report`s date: <%= @days.first["date"][3, 8] %></p>
+    <p class="m-0 p-0">Report by: <%= @monthly_report.mentor.first_name %></p>
+  </div>
+
+  <div class="m-0 p-0 overflow-x-auto">
+    <table class="table table-sm table bordered border-white table-hover" style="min-width: 1800px;">
+      <thead>
+        <tr>
+          <th>№</th>
+          <th>Name</th>
+          <th>Account number</th>
+          <% @days.each do |day| %>
+            <th><%= day["date"][0, 2] %></th>
+          <% end %>
+          <th>Visit</th>
+          <th>Unvisit</th>
+          <th>Sick</th>
+          <th>Vacation</th>
+          <th>Other</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @monthly_report.data.each_with_index do |mrd, index| %>
+          <tr>
+            <th scope="row"><%= index + 1 %></th>
+            <td><%= mrd["child_name"] %></td>
+            <td><%= mrd["account_number"] %></td>
+            <% mrd["monthly_report_days"].each do |day| %>
+              <td>
+                <% if day["kindergarten_visited"] == true %>
+                  ✅
+                <% elsif day["kindergarten_visited"] == false %>
+                  <% if day["reason"] == "vacation" %>
+                    О
+                  <% elsif day["reason"] == "sick" %>
+                    Б
+                  <% elsif day["reason"] == "other" %>
+                    Н
+                  <% end %>
+                <% else %>
+                !
+                <% end %>
+              </td>
+            <% end %>
+            <td><%= mrd["monthly_report_info"]["count_of_visit"] %></td>
+            <td><%= mrd["monthly_report_info"]["count_of_unvisit"] %></td>
+            <td><%= mrd["monthly_report_info"]["count_of_sick"] %></td>
+            <td><%= mrd["monthly_report_info"]["count_of_vacation"] %></td>
+            <td><%= mrd["monthly_report_info"]["count_of_other"] %></td>
+          </tr>
+        <% end %>
+        <tr>
+          <th></th>
+          <td>Visit</td>
+          <td></td>
+          <% @daily_stats.each do |stat| %>
+            <td><%= stat[:visit] %></td>
+          <% end %>
+          <td colspan="5"><%= @monthly_stats[:count_of_visit] %></td>
+        </tr>
+        <tr>
+          <th></th>
+          <td>Unvisit</td>
+          <td></td>
+          <% @daily_stats.each do |stat| %>
+            <td><%= stat[:unvisit] %></td>
+          <% end %>
+          <td></td>
+          <td colspan="5"><%= @monthly_stats[:count_of_unvisit] %></td>
+        </tr>
+        <tr>
+          <th></th>
+          <td>Sick</td>
+          <td></td>
+          <% @daily_stats.each do |stat| %>
+            <td><%= stat[:sick] %></td>
+          <% end %>
+          <td></td>
+          <td></td>
+          <td colspan="5"><%= @monthly_stats[:count_of_sick] %></td>
+        </tr>
+        <tr>
+          <th></th>
+          <td>Vacation</td>
+          <td></td>
+          <% @daily_stats.each do |stat| %>
+            <td><%= stat[:vacation] %></td>
+          <% end %>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td colspan="5"><%= @monthly_stats[:count_of_vacation] %></td>
+        </tr>
+        <tr>
+          <th></th>
+          <td>Other</td>
+          <td></td>
+          <% @daily_stats.each do |stat| %>
+            <td><%= stat[:other] %></td>
+          <% end %>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td colspan="5"><%= @monthly_stats[:count_of_other] %></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

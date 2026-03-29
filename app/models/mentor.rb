@@ -4,4 +4,8 @@ class Mentor < ApplicationRecord
   has_many :monthly_reports
 
   validates :first_name, :middle_name, :last_name, presence: true
+
+  def has_monthly_reports?
+    monthly_reports.any?
+  end
 end

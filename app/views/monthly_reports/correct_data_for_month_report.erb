@@ -19,7 +19,7 @@
           </button>
         </h2>
         <div id="panelsStayOpen-collapse-<%= visits.first.child.id %>" class="accordion-collapse collapse show">
-          <div class="accordion-body">
+          <div class="accordion-body px-0">
             <%= form_with url: overwrite_children_info_path, method: :patch, data: { turbo: true } do |form| %>
               <table class="table" id="visit">
                 <tr>

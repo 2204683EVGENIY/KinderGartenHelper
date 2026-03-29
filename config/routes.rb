@@ -26,5 +26,5 @@ Rails.application.routes.draw do
   patch "overwrite_children_info", to: "monthly_reports#overwrite_children_info"
   patch "overwrite_child_info", to: "monthly_reports#overwrite_child_info"
 
-  resources :monthly_reports, only: %i[create]
+  resources :monthly_reports, only: %i[create index show]
 end
