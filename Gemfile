@@ -2,6 +2,7 @@ source "https://rubygems.org"
 
 gem "rails", "~> 8.0.1"
 gem "caxlsx"
+gem "caxlsx_rails"
 gem "net-smtp"
 gem "propshaft"
 gem "sqlite3", ">= 2.1"

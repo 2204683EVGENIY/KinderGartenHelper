@@ -51,30 +51,25 @@ class MonthlyReportsController < ApplicationController
   def show
     @monthly_report = MonthlyReport.find(params[:id])
     @days = @monthly_report.data.first["monthly_report_days"]
-    @daily_stats = @days.map do |day|
-      date = day["date"]
+    @daily_stats = get_daily_stats(@monthly_report)
+    @monthly_stats = get_monthly_stats(@monthly_report)
+  end
 
-      day_data = @monthly_report.data.map do |child|
-        child["monthly_report_days"].find { |d| d["date"] == date }
-      end.compact
+  def export_to_xlsx
+    @monthly_report = MonthlyReport.find(params[:id])
 
-      {
-        date: date,
-        visit: day_data.count { |d| d["kindergarten_visited"] == true },
-        unvisit: day_data.count { |d| d["kindergarten_visited"] == false },
-        sick: day_data.count { |d| d["reason"] == "sick" },
-        vacation: day_data.count { |d| d["reason"] == "vacation" },
-        other: day_data.count { |d| d["reason"] == "other" }
-      }
+    package = Axlsx::Package.new
+    workbook = package.workbook
+
+    workbook.add_worksheet(name: "Report") do |sheet|
+      build_header(sheet, @monthly_report)
+      build_rows(sheet, @monthly_report)
+      build_summary(sheet, @monthly_report)
     end
 
-    @monthly_stats = {
-      count_of_visit:    @monthly_report.data.sum { |m| m["monthly_report_info"]["count_of_visit"] },
-      count_of_unvisit:  @monthly_report.data.sum { |m| m["monthly_report_info"]["count_of_unvisit"] },
-      count_of_sick:     @monthly_report.data.sum { |m| m["monthly_report_info"]["count_of_sick"] },
-      count_of_vacation: @monthly_report.data.sum { |m| m["monthly_report_info"]["count_of_vacation"] },
-      count_of_other:    @monthly_report.data.sum { |m| m["monthly_report_info"]["count_of_other"] }
-    }
+    send_data package.to_stream.read,
+      filename: "monthly_report_#{ Time.now.to_i }.xlsx",
+      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
   end
 
   def correct_data_for_month_report
@@ -152,6 +147,102 @@ class MonthlyReportsController < ApplicationController
           locals: { visit: visit }
         )
       end
+    end
+  end
+
+  def get_monthly_stats(monthly_report)
+    {
+      count_of_visit:    monthly_report.data.sum { |m| m["monthly_report_info"]["count_of_visit"] },
+      count_of_unvisit:  monthly_report.data.sum { |m| m["monthly_report_info"]["count_of_unvisit"] },
+      count_of_sick:     monthly_report.data.sum { |m| m["monthly_report_info"]["count_of_sick"] },
+      count_of_vacation: monthly_report.data.sum { |m| m["monthly_report_info"]["count_of_vacation"] },
+      count_of_other:    monthly_report.data.sum { |m| m["monthly_report_info"]["count_of_other"] }
+    }
+  end
+
+  def get_daily_stats(monthly_report)
+    days = monthly_report.data.first["monthly_report_days"]
+    days.map do |day|
+      date = day["date"]
+
+      day_data = monthly_report.data.map do |child|
+        child["monthly_report_days"].find { |d| d["date"] == date }
+      end.compact
+
+      {
+        date: date,
+        visit: day_data.count { |d| d["kindergarten_visited"] == true },
+        unvisit: day_data.count { |d| d["kindergarten_visited"] == false },
+        sick: day_data.count { |d| d["reason"] == "sick" },
+        vacation: day_data.count { |d| d["reason"] == "vacation" },
+        other: day_data.count { |d| d["reason"] == "other" }
+      }
+    end
+  end
+
+  def build_header(sheet, monthly_report)
+    days = monthly_report.data.first["monthly_report_days"]
+    header = [ "№", "Name", "Account number" ]
+
+    days.each do |day|
+      header << Date.parse(day["date"].to_s).day
+    end
+
+    header += [ "Visit", "Unvisit", "Sick", "Vacation", "Other" ]
+    sheet.add_row header
+  end
+
+  def build_rows(sheet, monthly_report)
+    monthly_report.data.each_with_index do |mrd, index|
+      row = []
+
+      row << index + 1
+      row << mrd["child_name"]
+      row << mrd["account_number"]
+
+      mrd["monthly_report_days"].each do |day|
+        row << day_symbol(day)
+      end
+
+      info = mrd["monthly_report_info"]
+
+      row << info["count_of_visit"]
+      row << info["count_of_unvisit"]
+      row << info["count_of_sick"]
+      row << info["count_of_vacation"]
+      row << info["count_of_other"]
+
+      sheet.add_row row
+    end
+  end
+
+  def build_summary(sheet, monthly_report)
+    monthly_stats = get_monthly_stats(monthly_report)
+    daily_stats = get_daily_stats(monthly_report)
+    days_count = monthly_report.data.first["monthly_report_days"].count
+    children_count = monthly_report.group.children.count
+
+    sheet.add_row [ "", "Visit", "", *daily_stats.map { |s| s[:visit] }, monthly_stats[:count_of_visit] ]
+    sheet.add_row [ "", "Unvisit", "", *daily_stats.map { |s| s[:unvisit] }, "", monthly_stats[:count_of_unvisit] ]
+    sheet.add_row [ "", "Sick", "", *daily_stats.map { |s| s[:sick] }, "", "", monthly_stats[:count_of_sick] ]
+    sheet.add_row [ "", "Vacation", "", *daily_stats.map { |s| s[:vacation] }, "", "", "", monthly_stats[:count_of_vacation] ]
+    sheet.add_row [ "", "Other", "", *daily_stats.map { |s| s[:other] }, "", "", "", "", monthly_stats[:count_of_other] ]
+    sheet.add_style [ "A1:#{ days_count == 28 ? "AK1" : days_count == 30 ? "AL1" : "AM1" }" ], b: true
+    sheet.add_style [ "B1:B#{ children_count + 6 }" ], b: true
+    sheet.add_style [ "A1:#{ days_count == 28 ? "AK21" : days_count == 30 ? "AL21" : "AM21" }" ], alignment: { horizontal: :center }, sz: 12
+    widths = [ 3, 40, 20 ]
+    widths += Array.new(days_count, 4)
+    sheet.column_widths(*widths)
+  end
+
+  def day_symbol(day)
+    return "✓" if day["kindergarten_visited"]
+
+    case day["reason"]
+    when "sick" then "Б"
+    when "vacation" then "О"
+    when "other" then "Н"
+    else "!"
     end
   end
 end

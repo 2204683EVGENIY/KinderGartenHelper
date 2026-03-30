@@ -1,11 +1,13 @@
-<%= content_for(:title, "KGH | Report") %>
+<%= content_for(:title, "KGH | MR #{ @days.first["date"][3, 8] }") %>
 
 <div class="container-fluid m-0 p-3">
   <%= link_to "Back", monthly_reports_path, class: "btn btn-primary col-12 mb-3" %>
+  <%= link_to "Download report as xlsx", export_to_xlsx_monthly_report_path(@monthly_report), target: "_blank", class: "btn btn-primary col-12 mb-3" %>
 
   <div class="mb-2 mt-0 mx-0 p-0 d-flex flex-row">
-    <p class="me-3 ms-0 my-0 p-0">Report`s date: <%= @days.first["date"][3, 8] %></p>
-    <p class="m-0 p-0">Report by: <%= @monthly_report.mentor.first_name %></p>
+    <p class="me-2 ms-0 my-0 p-0">Report`s date: <%= @days.first["date"][3, 8] %></p>
+    <p class="me-2 ms-0 my-0 p-0">Report by: <%= @monthly_report.mentor.first_name %></p>
+    <p class="m-0 p-0">Group: <%= @monthly_report.group.title %></p>
   </div>
 
   <div class="m-0 p-0 overflow-x-auto">
