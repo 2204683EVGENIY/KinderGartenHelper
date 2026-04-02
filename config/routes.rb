@@ -31,4 +31,6 @@ Rails.application.routes.draw do
       get :export_to_xlsx
     end
   end
+  resources :passwords, param: :token
+  resource :session
 end

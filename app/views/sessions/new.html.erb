@@ -1,0 +1,24 @@
+<div class="container-fluid m-0 p-3 row">
+  <%= content_for(:title, "KGH | Sign in") %>
+
+  <div class="my-0 p-0 row col-12 col-sm-6 mx-auto min-vh-100 d-flex align-items-center">
+    <%= form_with model: @session, url: session_path, html: { class: "w-100 col-12 m-0 p-0" } do |form| %>
+      <%= tag.div(flash[:alert], style: "color:red", class: "text-center") if flash[:alert] %>
+      <%= tag.div(flash[:notice], style: "color:green", class: "text-center") if flash[:notice] %>
+
+      <h1 class="mb-3 fw-semibold text-center">Sign in</h1>
+
+      <div class="form-floating mb-3">
+        <%= form.email_field :email_address, class: "form-control", id: "EmailField", required: true, autofocus: true, autocomplete: "username", placeholder: "Enter your email address", value: params[:email_address] %>
+        <%= form.label :email_field, "Enter your email" %>
+      </div>
+      <div class="form-floating mb-3">
+        <%= form.password_field :password, class: "form-control", id: "PasswordField", required: true, autocomplete: "current-password", placeholder: "Enter your password" %>
+        <%= form.label :email_field, "Enter your password" %>
+      </div>
+      <%= form.submit "Sign in", class: "btn btn-primary w-100" %>
+    <% end %>
+  </div>
+
+  <%# link_to "Forgot password?", new_password_path %>
+</div>

@@ -4,7 +4,7 @@ class SelectReportDayController < ApplicationController
   before_action :correct_day, except: %i[select_day select_previous_or_next_day add_info_to_children]
 
   def select_day
-    @mentor = Mentor.includes(:groups).find(1)
+    @mentor = Mentor.includes(:groups).find(Current.user.mentor.id)
     @groups = @mentor.groups
     @day = params[:day]
 
@@ -12,7 +12,7 @@ class SelectReportDayController < ApplicationController
   end
 
   def select_previous_or_next_day
-    @mentor = Mentor.includes(:groups).find(1)
+    @mentor = Mentor.includes(:groups).find(Current.user.mentor.id)
     @groups = @mentor.groups
 
     if params[:choosing_day] == "next" || params[:choosing_day] == "previous"

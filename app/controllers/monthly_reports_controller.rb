@@ -45,14 +45,19 @@ class MonthlyReportsController < ApplicationController
   end
 
   def index
-    @monthly_reports = Mentor.find(1).monthly_reports.order(created_at: :desc)
+    @monthly_reports = Current.user.mentor.monthly_reports.order(created_at: :desc)
   end
 
   def show
     @monthly_report = MonthlyReport.find(params[:id])
-    @days = @monthly_report.data.first["monthly_report_days"]
-    @daily_stats = get_daily_stats(@monthly_report)
-    @monthly_stats = get_monthly_stats(@monthly_report)
+
+    if Current.user.mentor.monthly_reports.include?(@monthly_report)
+      @days = @monthly_report.data.first["monthly_report_days"]
+      @daily_stats = get_daily_stats(@monthly_report)
+      @monthly_stats = get_monthly_stats(@monthly_report)
+    else
+      redirect_to root_path
+    end
   end
 
   def export_to_xlsx
@@ -74,7 +79,7 @@ class MonthlyReportsController < ApplicationController
 
   def correct_data_for_month_report
     if [ *2025..(Date.current.year + 1) ].include?(params[:year].to_i) && Group.pluck(:id).include?(params[:group_id].to_i) && [ *1..12 ].include?(params[:month].to_i)
-      @mentor = Mentor.includes(:groups).find(1)
+      @mentor = Mentor.includes(:groups).find(Current.user.mentor.id)
       @group = Group.includes(:children).find(params[:group_id])
       @children = @group.children.includes(:info_about_visits)
       @report_date = Date.new(params[:year].to_i, params[:month].to_i, 1)
@@ -117,7 +122,7 @@ class MonthlyReportsController < ApplicationController
   end
 
   def correct_month_report_data_form
-    @mentor = Mentor.includes(:groups).find(1)
+    @mentor = Mentor.includes(:groups).find(Current.user.mentor.id)
     @groups = @mentor.groups
 
     render partial: "correct_month_report_data_form", locals: { groups: @groups }
