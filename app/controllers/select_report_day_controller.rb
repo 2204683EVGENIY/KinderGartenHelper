@@ -25,36 +25,43 @@ class SelectReportDayController < ApplicationController
 
   def add_info_to_children
     if params[:child_ids].present? && params[:commit].present? && params[:day].present?
+
       children = Child.where(id: params[:child_ids])
 
-      if params[:commit] == "Mark as visited"
-        children.each do |child|
-          if child.info_already_present?(params[:day].to_date)
-            child.refresh_visit_info(params[:day].to_date)
-            turbo_update(child, params[:day].to_date)
-          else
-            child.create_visit_info(params[:day].to_date)
-            turbo_update(child, params[:day].to_date)
+      if children.first.group.mentors.include?(Current.user.mentor)
+        if params[:commit] == "Mark as visited"
+          children.each do |child|
+            if child.info_already_present?(params[:day].to_date)
+              child.refresh_visit_info(params[:day].to_date)
+              turbo_update(child, params[:day].to_date)
+            else
+              child.create_visit_info(params[:day].to_date)
+              turbo_update(child, params[:day].to_date)
+            end
           end
-        end
-      elsif params[:commit] == "Mark as skiped"
-        children.each do |child|
-          if child.info_already_present?(params[:day].to_date)
-            child.refresh_visit_info(params[:day].to_date)
-            turbo_update(child, params[:day].to_date)
-          else
-            child.create_skip_info(params[:day].to_date)
-            turbo_update(child, params[:day].to_date)
+        elsif params[:commit] == "Mark as skiped"
+          children.each do |child|
+            if child.info_already_present?(params[:day].to_date)
+              child.refresh_visit_info(params[:day].to_date)
+              turbo_update(child, params[:day].to_date)
+            else
+              child.create_skip_info(params[:day].to_date)
+              turbo_update(child, params[:day].to_date)
+            end
           end
+        else
+          redirect_to root_path
         end
       else
         redirect_to root_path
       end
+    else
+      redirect_to root_path
     end
   end
 
   def add_info_about_visit
-    if @date.present? && @child.present?
+    if @date.present? && @child.present? && @child.group.mentors.include?(Current.user.mentor)
       @child.create_visit_info(@date)
       turbo_update(@child, @date)
     else
@@ -63,7 +70,7 @@ class SelectReportDayController < ApplicationController
   end
 
   def add_info_about_skip
-    if @date.present? && @child.present?
+    if @date.present? && @child.present? && @child.group.mentors.include?(Current.user.mentor)
       @child.create_skip_info(@date)
       turbo_update(@child, @date)
     else
@@ -72,8 +79,17 @@ class SelectReportDayController < ApplicationController
   end
 
   def refresh_info_about_visit
-    if @date.present? && @child.present?
+    if @date.present? && @child.present? && @child.group.mentors.include?(Current.user.mentor)
       @child.refresh_visit_info(@date)
+      turbo_update(@child, @date)
+    else
+      redirect_to root_path
+    end
+  end
+
+  def delete_info_about_visit
+    if @date.present? && @child.present? && @child.group.mentors.include?(Current.user.mentor)
+      @child.delete_visit_info(@date)
       turbo_update(@child, @date)
     else
       redirect_to root_path

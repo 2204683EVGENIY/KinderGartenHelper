@@ -21,6 +21,10 @@ class Child < ApplicationRecord
     info_about_visits.create(date: date, kindergarten_visited: false, reason: "other")
   end
 
+  def delete_visit_info(date)
+    info_about_visits.find_by(date: date).destroy
+  end
+
   def refresh_visit_info(date)
     check_info_about_visits = info_about_visits.find_by(date: date)
 

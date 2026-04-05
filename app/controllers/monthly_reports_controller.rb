@@ -3,45 +3,49 @@ class MonthlyReportsController < ApplicationController
   before_action :find_group, only: %i[create]
 
   def create
-    month_range = (monthly_report_params[:report_date].to_date..monthly_report_params[:report_date].to_date.end_of_month)
-    mentor = Mentor.find(monthly_report_params[:mentor_id])
+    if @group.mentors.include?(Current.user.mentor)
+      month_range = (monthly_report_params[:report_date].to_date..monthly_report_params[:report_date].to_date.end_of_month)
+      mentor = Current.user.mentor
 
-    report_data = @group.children.map do |child|
-      current_info_about_visits_of_month = child.info_about_visits.select { |i| i.date.month == month_range.first.month }
-      count_of_visit = current_info_about_visits_of_month.select { |i| i.kindergarten_visited == true }.count
-      count_of_unvisit = current_info_about_visits_of_month.select { |i| i.kindergarten_visited == false }.count
-      count_of_sick = current_info_about_visits_of_month.select { |i| i.kindergarten_visited == false && i.reason == "sick" }.count
-      count_of_vacation = current_info_about_visits_of_month.select { |i| i.kindergarten_visited == false && i.reason == "vacation" }.count
-      count_of_other = current_info_about_visits_of_month.select { |i| i.kindergarten_visited == false && i.reason == "other" }.count
+      report_data = @group.children.map do |child|
+        current_info_about_visits_of_month = child.info_about_visits.select { |i| i.date.month == month_range.first.month }
+        count_of_visit = current_info_about_visits_of_month.select { |i| i.kindergarten_visited == true }.count
+        count_of_unvisit = current_info_about_visits_of_month.select { |i| i.kindergarten_visited == false }.count
+        count_of_sick = current_info_about_visits_of_month.select { |i| i.kindergarten_visited == false && i.reason == "sick" }.count
+        count_of_vacation = current_info_about_visits_of_month.select { |i| i.kindergarten_visited == false && i.reason == "vacation" }.count
+        count_of_other = current_info_about_visits_of_month.select { |i| i.kindergarten_visited == false && i.reason == "other" }.count
 
-      {
-        child_name: "#{ child.first_name } #{ child.middle_name } #{ child.last_name }",
-        account_number: child.account_number,
-        monthly_report_days: month_range.map do |date|
-         {
-            date: date.strftime("%d.%m.%Y"),
-            kindergarten_visited: child.info_about_visits.find_by(date: date)&.kindergarten_visited,
-            reason: child.info_about_visits.find_by(date: date)&.reason
+        {
+          child_name: "#{ child.first_name } #{ child.middle_name } #{ child.last_name }",
+          account_number: child.account_number,
+          monthly_report_days: month_range.map do |date|
+          {
+              date: date.strftime("%d.%m.%Y"),
+              kindergarten_visited: child.info_about_visits.find_by(date: date)&.kindergarten_visited,
+              reason: child.info_about_visits.find_by(date: date)&.reason
+            }
+          end,
+          monthly_report_info: {
+            count_of_visit: count_of_visit,
+            count_of_unvisit: count_of_unvisit,
+            count_of_sick: count_of_sick,
+            count_of_vacation: count_of_vacation,
+            count_of_other: count_of_other
           }
-        end,
-        monthly_report_info: {
-          count_of_visit: count_of_visit,
-          count_of_unvisit: count_of_unvisit,
-          count_of_sick: count_of_sick,
-          count_of_vacation: count_of_vacation,
-          count_of_other: count_of_other
         }
-      }
+      end
+
+      MonthlyReport.create(
+        group_id: @group.id,
+        mentor: mentor,
+        report_date: monthly_report_params[:report_date],
+        data: report_data
+      )
+
+      redirect_to monthly_reports_path
+    else
+      redirect_to root_path
     end
-
-    MonthlyReport.create(
-      group_id: monthly_report_params[:group_id],
-      mentor: mentor,
-      report_date: monthly_report_params[:report_date],
-      data: report_data
-    )
-
-    redirect_to root_path
   end
 
   def index
@@ -63,27 +67,36 @@ class MonthlyReportsController < ApplicationController
   def export_to_xlsx
     @monthly_report = MonthlyReport.find(params[:id])
 
-    package = Axlsx::Package.new
-    workbook = package.workbook
+    if Current.user.mentor == @monthly_report.mentor
+      package = Axlsx::Package.new
+      workbook = package.workbook
 
-    workbook.add_worksheet(name: "Report") do |sheet|
-      build_header(sheet, @monthly_report)
-      build_rows(sheet, @monthly_report)
-      build_summary(sheet, @monthly_report)
+      workbook.add_worksheet(name: "Report") do |sheet|
+        build_header(sheet, @monthly_report)
+        build_rows(sheet, @monthly_report)
+        build_summary(sheet, @monthly_report)
+      end
+
+      send_data package.to_stream.read,
+        filename: "monthly_report_#{ Time.now.to_i }.xlsx",
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    else
+      rediret_to root_path
     end
-
-    send_data package.to_stream.read,
-      filename: "monthly_report_#{ Time.now.to_i }.xlsx",
-      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
   end
 
   def correct_data_for_month_report
     if [ *2025..(Date.current.year + 1) ].include?(params[:year].to_i) && Group.pluck(:id).include?(params[:group_id].to_i) && [ *1..12 ].include?(params[:month].to_i)
-      @mentor = Mentor.includes(:groups).find(Current.user.mentor.id)
       @group = Group.includes(:children).find(params[:group_id])
-      @children = @group.children.includes(:info_about_visits)
-      @report_date = Date.new(params[:year].to_i, params[:month].to_i, 1)
-      @info_about_visits = @children.map { |child| child.find_info_about_visits_for_correction(params[:month].to_i, params[:year].to_i) }.select { |info| info.any? }
+
+      if @group.mentors.include?(Current.user.mentor)
+        @mentor = Mentor.includes(:groups).find(Current.user.mentor.id)
+        @children = @group.children.includes(:info_about_visits)
+        @report_date = Date.new(params[:year].to_i, params[:month].to_i, 1)
+        @info_about_visits = @children.map { |child| child.find_info_about_visits_for_correction(params[:month].to_i, params[:year].to_i) }.select { |info| info.any? }
+      else
+        redirect_ro root_path
+      end
     else
       redirect_to root_path
     end
@@ -93,7 +106,7 @@ class MonthlyReportsController < ApplicationController
     if @reasons.include?(params[:commit])
       visits = InfoAboutVisit.where(id: params[:visit_ids])
 
-      if visits.any?
+      if visits.any? && visits.first.child.group.mentors.include?(Current.user.mentor)
         updated_visits = []
 
         visits.each do |visit|
@@ -114,8 +127,12 @@ class MonthlyReportsController < ApplicationController
     if @reasons.include?(params[:reason])
       visit = InfoAboutVisit.find(params[:visit_id])
 
-      visit.update_visit_info(params[:reason])
-      turbo_update(visit.child, visit.date, visit)
+      if visit.child.group.mentors.include?(Current.user.mentor)
+        visit.update_visit_info(params[:reason])
+        turbo_update(visit.child, visit.date, visit)
+      else
+        redirect_to root_path
+      end
     else
       redirect_to root_path
     end

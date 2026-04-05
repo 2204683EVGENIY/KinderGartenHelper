@@ -26,6 +26,8 @@ Rails.application.routes.draw do
   patch "overwrite_children_info", to: "monthly_reports#overwrite_children_info"
   patch "overwrite_child_info", to: "monthly_reports#overwrite_child_info"
 
+  delete "delete_info_about_visit", to: "select_report_day#delete_info_about_visit"
+
   resources :monthly_reports, only: %i[create index show] do
     member do
       get :export_to_xlsx
