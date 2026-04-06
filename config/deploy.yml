@@ -2,12 +2,12 @@
 service: kinder_garten_helper
 
 # Name of the container image.
-image: your-user/kinder_garten_helper
+image: snow2204683/kinder_garten_helper
 
 # Deploy to these servers.
 servers:
   web:
-    - 192.168.0.1
+    - 84.38.182.74
   # job:
   #   hosts:
   #     - 192.168.0.1
@@ -19,13 +19,13 @@ servers:
 # Note: If using Cloudflare, set encryption mode in SSL/TLS setting to "Full" to enable CF-to-app encryption.
 proxy:
   ssl: true
-  host: app.example.com
+  host: 84.38.182.74
 
 # Credentials for your image host.
 registry:
   # Specify the registry server, if you're not using Docker Hub
   # server: registry.digitalocean.com / ghcr.io / ...
-  username: your-user
+  username: snow2204683
 
   # Always use an access token rather than real password when possible.
   password:
@@ -88,8 +88,8 @@ builder:
   #   - RAILS_MASTER_KEY
 
 # Use a different ssh user than root
-# ssh:
-#   user: app
+ssh:
+  user: snow
 
 # Use accessory services (secrets come from .kamal/secrets).
 # accessories:
