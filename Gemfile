@@ -17,6 +17,7 @@ gem "solid_queue"
 gem "solid_cable"
 gem "rubyzip", ">= 2.4.1"
 gem "bootsnap", require: false
+gem "kamal", require: false
 gem "thruster", require: false
 
 group :development, :test do
