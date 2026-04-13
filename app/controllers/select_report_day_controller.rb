@@ -110,8 +110,8 @@ class SelectReportDayController < ApplicationController
     respond_to do |format|
       format.turbo_stream do
         Turbo::StreamsChannel.broadcast_update_to(
-          "#{ child.group.title }_children_list_#{ date }",
-          target: "child_#{ child.id }",
+          child.group.mentors,
+          target: "child_#{ child.id }_#{ date }",
           partial: "select_report_day/overwrite_info_about_visit",
           locals: { child: child, day: params[:day] }
         )

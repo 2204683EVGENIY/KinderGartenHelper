@@ -110,7 +110,6 @@
               <div id="collapseOne<%= group.id %>" class="accordion-collapse collapse show" data-bs-parent="#accordionExample<%= group.id %>">
                 <div class="accordion-body p-1">
                   <div class="container-fluid m-0 py-1 px-1 col-12 d-flex justify-content-center">
-                    <%= turbo_stream_from "#{ group.title }_children_list_#{ day }" %>
                     <%= form_with url: add_info_to_children_path(params: { day: day }), method: :post, data: { turbo: true }, class: "w-100" do |form| %>
                       <table class="table table-sm" id="children">
                         <tr>
@@ -119,7 +118,7 @@
                           <th>Add Info</th>
                         </tr>
                         <% group.children.each do |child| %>
-                          <tr id="child_<%= child.id %>">
+                          <tr id="child_<%= child.id %>_<%= day %>">
                             <td class="<%= bg_color_by_visit(child, day.to_date) %>">
                               <div class="mt-2 mb-0 mx-0 p-0">
                                 <input class="form-check-input p-3 m-0" type="checkbox" id="child_checkbox_<%= child.id %>" value="<%= child.id %>" name="child_ids[]">
