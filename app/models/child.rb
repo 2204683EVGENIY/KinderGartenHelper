@@ -1,10 +1,15 @@
 class Child < ApplicationRecord
+  default_scope { order(first_name: :asc) }
+
   belongs_to :group
   has_many :info_about_visits
 
   validates :first_name, :middle_name, :last_name, :account_number, :active, presence: true
   validates :account_number, numericality: { only_integer: true }, uniqueness: true
   validates :active, inclusion: { in: [ true, false ] }
+
+  before_validation :add_rand_account_number
+  before_validation :add_last_name
 
   def find_info_about_visits_for_correction(month, year)
     start_of_month = Date.new(year, month, 1)
@@ -47,5 +52,15 @@ class Child < ApplicationRecord
 
   def info_already_present?(day)
     info_about_visits.find_by(date: day.to_date).present?
+  end
+
+  private
+
+  def add_rand_account_number
+    self.account_number = rand(100_000..999_999)
+  end
+
+  def add_last_name
+    self.last_name = "NONE" if self.last_name.blank?
   end
 end
