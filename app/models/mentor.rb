@@ -9,4 +9,8 @@ class Mentor < ApplicationRecord
   def has_monthly_reports?
     monthly_reports.any?
   end
+
+  def owner?(monthly_report)
+    self == monthly_report.mentor
+  end
 end

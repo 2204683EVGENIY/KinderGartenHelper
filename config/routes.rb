@@ -28,7 +28,7 @@ Rails.application.routes.draw do
 
   delete "delete_info_about_visit", to: "select_report_day#delete_info_about_visit"
 
-  resources :monthly_reports, only: %i[create index show] do
+  resources :monthly_reports, only: %i[create index show destroy] do
     member do
       get :export_to_xlsx
     end

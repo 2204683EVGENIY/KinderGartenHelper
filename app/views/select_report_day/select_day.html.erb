@@ -20,7 +20,7 @@
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
           </div>
           <div class="modal-body d-flex flex-column">
-            <%= button_to "Yes, I do.", session_path(Current.user), form_class: "p-0", class: "btn btn-danger w-100 mb-3", data: { turbo_confirm: "Are you shure?", turbo: false }, method: :delete %>
+            <%= button_to "Yes, I do.", session_path(Current.user), form_class: "p-0", class: "btn btn-danger w-100 mb-3", data: { turbo: false }, method: :delete %>
           </div>
         </div>
       </div>

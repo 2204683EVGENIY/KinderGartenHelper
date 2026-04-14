@@ -3,6 +3,25 @@
 <div class="container-fluid m-0 p-3">
   <%= link_to "Back", monthly_reports_path, class: "btn btn-primary col-12 mb-3" %>
   <%= link_to "Download report as xlsx", export_to_xlsx_monthly_report_path(@monthly_report), target: "_blank", class: "btn btn-primary col-12 mb-3" %>
+  <% if @monthly_report.mentor.owner?(@monthly_report) %>
+    <button type="button" class="btn btn-danger col-12 mb-3" data-bs-toggle="modal" data-bs-target="#destroyMonthlyReportModal">
+      Destroy the monthly report
+    </button>
+
+    <div class="modal fade" id="destroyMonthlyReportModal" tabindex="-1" aria-labelledby="destroyMonthlyReportModal" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="destroyMonthlyReportModal">Do you want to destroy the current report?</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+          </div>
+          <div class="modal-body d-flex flex-column">
+            <%= button_to "Yes, I do.", monthly_report_path(@monthly_report), form_class: "p-0", class: "btn btn-danger w-100 mb-3", data: { turbo: false }, method: :delete %>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% end %>
 
   <div class="mb-2 mt-0 mx-0 p-0 d-flex flex-row">
     <p class="me-2 ms-0 my-0 p-0">Report`s date: <%= @days.first["date"][3, 8] %></p>

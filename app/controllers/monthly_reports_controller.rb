@@ -64,6 +64,18 @@ class MonthlyReportsController < ApplicationController
     end
   end
 
+  def destroy
+    @monthly_report = MonthlyReport.find(params[:id])
+
+    if Current.user.mentor.monthly_reports.include?(@monthly_report)
+      @monthly_report.destroy
+
+      redirect_to monthly_reports_path
+    else
+      redirect_to root_path
+    end
+  end
+
   def export_to_xlsx
     @monthly_report = MonthlyReport.find(params[:id])
 
