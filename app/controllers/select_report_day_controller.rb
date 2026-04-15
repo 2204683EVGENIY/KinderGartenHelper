@@ -19,7 +19,7 @@ class SelectReportDayController < ApplicationController
       params[:choosing_day] == "next" ? @day = params[:day].to_date + 1.day : @day = params[:day].to_date - 1.day
       render "select_day", locals: { mentor: @mentor, groups: @groups, day: @day }
     else
-      redirect_to root_path
+      redirect_to root_path, alert: "You must to give us the correct data."
     end
   end
 
@@ -50,13 +50,13 @@ class SelectReportDayController < ApplicationController
             end
           end
         else
-          redirect_to root_path
+          redirect_to root_path, alert: "You must to give us the correct data."
         end
       else
-        redirect_to root_path
+        redirect_to root_path, alert: "You are not welcome here."
       end
     else
-      redirect_to root_path
+      redirect_to root_path, alert: "You must to give us the correct data."
     end
   end
 
@@ -65,7 +65,7 @@ class SelectReportDayController < ApplicationController
       @child.create_visit_info(@date)
       turbo_update(@child, @date)
     else
-      redirect_to root_path
+      redirect_to root_path, alert: "You are not welcome here."
     end
   end
 
@@ -74,7 +74,7 @@ class SelectReportDayController < ApplicationController
       @child.create_skip_info(@date)
       turbo_update(@child, @date)
     else
-      redirect_to root_path
+      redirect_to root_path, alert: "You are not welcome here."
     end
   end
 
@@ -83,7 +83,7 @@ class SelectReportDayController < ApplicationController
       @child.refresh_visit_info(@date)
       turbo_update(@child, @date)
     else
-      redirect_to root_path
+      redirect_to root_path, alert: "You are not welcome here."
     end
   end
 
@@ -92,7 +92,7 @@ class SelectReportDayController < ApplicationController
       @child.delete_visit_info(@date)
       turbo_update(@child, @date)
     else
-      redirect_to root_path
+      redirect_to root_path, alert: "You are not welcome here."
     end
   end
 

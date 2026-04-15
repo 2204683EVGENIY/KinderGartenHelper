@@ -1,0 +1,8 @@
+<div class="m-0 p-0" id="flash">
+  <% flash.each do |key, value| %>
+    <div class="<%= flash_class(key.to_sym) %> alert-dismissible fade flash animate-slide show m-3 text-center" role="alert" id="flash">
+      <%= value %>
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Закрыть"></button>
+    </div>
+  <% end %>
+</div>

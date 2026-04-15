@@ -1,11 +1,8 @@
 <div class="container-fluid m-0 py-0 px-3 row">
   <%= content_for(:title, "KGH | Sign in") %>
 
-  <div class="my-0 p-0 row col-12 col-sm-6 mx-auto vh-100 d-flex align-items-center">
+  <div class="my-3 p-0 row col-12 mx-0">
     <%= form_with model: @session, url: session_path, html: { class: "w-100 col-12 m-0 p-0" } do |form| %>
-      <%= tag.div(flash[:alert], style: "color:red", class: "text-center") if flash[:alert] %>
-      <%= tag.div(flash[:notice], style: "color:green", class: "text-center") if flash[:notice] %>
-
       <h1 class="mb-3 fw-semibold text-center">Sign in</h1>
 
       <div class="form-floating mb-3">

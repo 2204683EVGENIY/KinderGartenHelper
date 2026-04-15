@@ -42,9 +42,9 @@ class MonthlyReportsController < ApplicationController
         data: report_data
       )
 
-      redirect_to monthly_reports_path
+      redirect_to monthly_reports_path, notice: "Report was successfully created."
     else
-      redirect_to root_path
+      redirect_to root_path, alert: "You are not welcome here."
     end
   end
 
@@ -55,31 +55,31 @@ class MonthlyReportsController < ApplicationController
   def show
     @monthly_report = MonthlyReport.find(params[:id])
 
-    if Current.user.mentor.monthly_reports.include?(@monthly_report)
+    if Current.user.mentor.owner?(@monthly_report)
       @days = @monthly_report.data.first["monthly_report_days"]
       @daily_stats = get_daily_stats(@monthly_report)
       @monthly_stats = get_monthly_stats(@monthly_report)
     else
-      redirect_to root_path
+      redirect_to root_path, alert: "You are not welcome here."
     end
   end
 
   def destroy
     @monthly_report = MonthlyReport.find(params[:id])
 
-    if Current.user.mentor.monthly_reports.include?(@monthly_report)
+    if Current.user.mentor.owner?(@monthly_report)
       @monthly_report.destroy
 
-      redirect_to monthly_reports_path
+      redirect_to monthly_reports_path, notice: "Report was successfully deleted."
     else
-      redirect_to root_path
+      redirect_to root_path, alert: "You are not welcome here."
     end
   end
 
   def export_to_xlsx
     @monthly_report = MonthlyReport.find(params[:id])
 
-    if Current.user.mentor == @monthly_report.mentor
+    if Current.user.mentor.owner?(@monthly_report)
       package = Axlsx::Package.new
       workbook = package.workbook
 
@@ -93,7 +93,7 @@ class MonthlyReportsController < ApplicationController
         filename: "monthly_report_#{ Time.now.to_i }.xlsx",
         type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     else
-      rediret_to root_path
+      rediret_to root_path, alert: "You are not welcome here."
     end
   end
 
@@ -107,10 +107,10 @@ class MonthlyReportsController < ApplicationController
         @report_date = Date.new(params[:year].to_i, params[:month].to_i, 1)
         @info_about_visits = @children.map { |child| child.find_info_about_visits_for_correction(params[:month].to_i, params[:year].to_i) }.select { |info| info.any? }
       else
-        redirect_ro root_path
+        redirect_ro root_path, alert: "You are not welcome here."
       end
     else
-      redirect_to root_path
+      redirect_to root_path, alert: "You are not welcome here."
     end
   end
 
@@ -128,10 +128,10 @@ class MonthlyReportsController < ApplicationController
 
         updated_visits.each { |visit| turbo_update(visit.child, visit.date, visit) }
       else
-        redirect_to root_path
+        redirect_to root_path, alert: "You are not welcome here."
       end
     else
-      redirect_to root_path
+      redirect_to root_path, alert: "You are not welcome here."
     end
   end
 
@@ -143,10 +143,10 @@ class MonthlyReportsController < ApplicationController
         visit.update_visit_info(params[:reason])
         turbo_update(visit.child, visit.date, visit)
       else
-        redirect_to root_path
+        redirect_to root_path, alert: "You are not welcome here."
       end
     else
-      redirect_to root_path
+      redirect_to root_path, alert: "You are not welcome here."
     end
   end
 

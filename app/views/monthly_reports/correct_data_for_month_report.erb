@@ -4,7 +4,41 @@
   <%= turbo_stream_from @mentor %>
   
   <%= link_to "Back", :back, class: "btn btn-primary col-12 mb-3" %>
-  <%= link_to "Generate report", monthly_reports_path(report_date: @report_date, group_id: @group.id, mentor_id: 1), class: "btn btn-primary col-12 mb-3", data: { turbo_confirm: "Are you ready?", turbo_method: "post" } %>
+  <button type="button" class="btn btn-primary col-12 mb-3" data-bs-toggle="modal" data-bs-target="#generateMonthlyReportModal">
+    Generate report
+  </button>
+
+  <div class="modal fade" id="generateMonthlyReportModal" tabindex="-1" aria-labelledby="generateMonthlyReportModal" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="generateMonthlyReportModal">Do you want to generate report?</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+        </div>
+        <div class="modal-body d-flex flex-column">
+          <div data-controller="loader" class="m-0 p-0">
+            <div data-loader-target="button" class="m-0 p-0">
+              <%= link_to "Generate report",
+                  monthly_reports_path(report_date: @report_date, group_id: @group.id, mentor_id: Current.user.mentor.id),
+                  class: "btn btn-primary col-12 mb-3",
+                  data: {
+                    turbo_method: "post",
+                    action: "click->loader#show"
+                  } %>
+            </div>
+
+            <div data-loader-target="spinner" class="d-none m-0 p-0">
+              <div class="m-0 p-0 w-100 text-center">
+                <div class="spinner-border text-primary" role="status">
+                  <span class="visually-hidden">Loading...</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <% @info_about_visits.each do |visits| %>
     <div class="accordion my-0 p-0" id="accordionPanelsStayOpenExample">
