@@ -254,16 +254,16 @@ class MonthlyReportsController < ApplicationController
     monthly_stats = get_monthly_stats(monthly_report)
     daily_stats = get_daily_stats(monthly_report)
     days_count = monthly_report.data.first["monthly_report_days"].count
-    children_count = monthly_report.group.children.count
+    count_of_rows = monthly_report.group.children.count + 6
 
     sheet.add_row [ "", "Visit", "", *daily_stats.map { |s| s[:visit] }, monthly_stats[:count_of_visit] ]
     sheet.add_row [ "", "Unvisit", "", *daily_stats.map { |s| s[:unvisit] }, "", monthly_stats[:count_of_unvisit] ]
     sheet.add_row [ "", "Sick", "", *daily_stats.map { |s| s[:sick] }, "", "", monthly_stats[:count_of_sick] ]
     sheet.add_row [ "", "Vacation", "", *daily_stats.map { |s| s[:vacation] }, "", "", "", monthly_stats[:count_of_vacation] ]
     sheet.add_row [ "", "Other", "", *daily_stats.map { |s| s[:other] }, "", "", "", "", monthly_stats[:count_of_other] ]
-    sheet.add_style [ "A1:#{ days_count == 28 ? "AK1" : days_count == 30 ? "AL1" : "AM1" }" ], b: true
-    sheet.add_style [ "B1:B#{ children_count + 6 }" ], b: true
-    sheet.add_style [ "A1:#{ days_count == 28 ? "AK21" : days_count == 30 ? "AL21" : "AM21" }" ], alignment: { horizontal: :center }, sz: 12
+    sheet.add_style [ "A1:#{ days_count == 28 ? "AJ1" : days_count == 30 ? "AL1" : "AM1" }" ], b: true
+    sheet.add_style [ "B1:B#{ count_of_rows }" ], b: true
+    sheet.add_style [ "A1:#{ days_count == 28 ? "AJ#{ count_of_rows }" : days_count == 30 ? "AL#{ count_of_rows }" : "AM#{ count_of_rows }" }" ], alignment: { horizontal: :center }, sz: 12
     widths = [ 3, 40, 20 ]
     widths += Array.new(days_count, 4)
     sheet.column_widths(*widths)
