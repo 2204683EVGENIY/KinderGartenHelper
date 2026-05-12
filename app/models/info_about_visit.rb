@@ -1,6 +1,8 @@
 class InfoAboutVisit < ApplicationRecord
   belongs_to :child
 
+  scope :get_visits_by_date, ->(date) { where(date: date).index_by(&:child_id) }
+
   enum :reason, sick: 0, vacation: 1, other: 2
 
   validates :date, presence: true

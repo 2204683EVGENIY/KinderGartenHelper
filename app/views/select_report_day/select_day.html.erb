@@ -108,19 +108,19 @@
                         </tr>
                         <% group.children.each do |child| %>
                           <tr id="child_<%= child.id %>_<%= day %>">
-                            <td class="<%= bg_color_by_visit(child, day.to_date) %>">
+                            <td class="<%= bg_color_by_visit(child, day.to_date, visits) %>">
                               <div class="mt-2 mb-0 mx-0 p-0">
                                 <input class="form-check-input p-3 m-0" type="checkbox" id="child_checkbox_<%= child.id %>" value="<%= child.id %>" name="child_ids[]">
                               </div>
                             </td>
-                            <td class="<%= bg_color_by_visit(child, day.to_date) %>">
+                            <td class="<%= bg_color_by_visit(child, day.to_date, visits) %>">
                               <div class="m-0 p-0 d-flex flex-column">
                                 <p class="m-0 p-0 lh-1"><%= child.first_name %></p>
                                 <p class="m-0 p-0 lh-1"><%= child.middle_name %></p>
                                 <p class="m-0 p-0 lh-1"><%= child.last_name %></p>
                               </div>
                             </td>
-                            <td class="<%= bg_color_by_visit(child, day.to_date) %>"><%= child_info_about_visit(child, day) %></td>
+                            <td class="<%= bg_color_by_visit(child, day.to_date, visits) %>"><%= child_info_about_visit(child, day, visits) %></td>
                           </tr>
                         <% end %>
                       </table>

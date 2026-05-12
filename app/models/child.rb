@@ -19,15 +19,15 @@ class Child < ApplicationRecord
   end
 
   def create_visit_info(date)
-    info_about_visits.create(date: date, kindergarten_visited: true, reason: nil)
+    info_about_visits.create(date: date, kindergarten_visited: true, reason: nil) if info_about_visits.find_by(date: date).nil?
   end
 
   def create_skip_info(date)
-    info_about_visits.create(date: date, kindergarten_visited: false, reason: "other")
+    info_about_visits.create(date: date, kindergarten_visited: false, reason: "other") if info_about_visits.find_by(date: date).nil?
   end
 
   def delete_visit_info(date)
-    info_about_visits.find_by(date: date).destroy
+    info_about_visits.find_by(date: date).destroy if info_about_visits.find_by(date: date).present?
   end
 
   def refresh_visit_info(date)
@@ -46,12 +46,12 @@ class Child < ApplicationRecord
     end
   end
 
-  def today_visited?(day)
-    info_about_visits.find_by(date: day.to_date).kindergarten_visited
+  def today_visited?(visits)
+    visits[id]&.kindergarten_visited
   end
 
-  def info_already_present?(day)
-    info_about_visits.find_by(date: day.to_date).present?
+  def info_already_present?(visits)
+    visits[id]&.present?
   end
 
   private

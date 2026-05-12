@@ -3,18 +3,20 @@ module SelectReportDayHelper
     day.to_date + 5.days
   end
 
-  def child_info_about_visit(child, day)
-    if child.info_about_visits.find_by(date: day.to_date).present?
-      refresh_info_about_visit(child, day)
+  def child_info_about_visit(child, day, visits)
+    visit = visits[child.id]
+
+    if visit.present?
+      refresh_info_about_visit(child, day, visits)
     else
       add_info_about_visit(child, day)
     end
   end
 
-  def bg_color_by_visit(child, day)
-    if child.info_already_present?(day) && child.today_visited?(day)
+  def bg_color_by_visit(child, day, visits)
+    if child.info_already_present?(visits) && child.today_visited?(visits)
       "bg-success"
-    elsif child.info_already_present?(day) && !child.today_visited?(day)
+    elsif child.info_already_present?(visits) && !child.today_visited?(visits)
       "bg-danger"
     else
       ""
@@ -27,8 +29,8 @@ module SelectReportDayHelper
 
   private
 
-  def refresh_info_about_visit(child, day)
-    render partial: "select_report_day/refresh_info_about_visit", locals: { child: child, day: day }
+  def refresh_info_about_visit(child, day, visits)
+    render partial: "select_report_day/refresh_info_about_visit", locals: { child: child, day: day, visits: visits }
   end
 
   def add_info_about_visit(child, day)
